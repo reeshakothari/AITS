@@ -1,0 +1,69 @@
+{
+  "seo": {
+    "title": "AITS Wash | Professional Truck Washing for Commercial Fleets",
+    "description": "AITS Wash is a professional, standardized and digital truck wash built for India's commercial trucks, with water treatment and recycling."
+  },
+  "hero": {
+    "eyebrow": "AITS Wash",
+    "title": "A professional wash infrastructure built specifically for commercial fleets.",
+    "lead": "Wash. Record. Maintain. Move.",
+    "image": "/images/wash-facility-concept.jpg",
+    "imageAlt": "Concept illustration of an AITS Wash facility with a wash bay and water treatment plant",
+    "imageCaption": "Concept illustration"
+  },
+  "pillars": [
+    { "title": "Fast", "text": "15-min target wash cycle", "status": "Proposed" },
+    { "title": "Standardized", "text": "Defined washing process every time", "status": "" },
+    { "title": "Digital", "text": "Every wash recorded automatically", "status": "" },
+    { "title": "Water-efficient", "text": "Treatment + recycling system", "status": "" },
+    { "title": "Fleet-first", "text": "Built for recurring B2B contracts", "status": "" }
+  ],
+  "system": {
+    "eyebrow": "Automated washing system",
+    "title": "Designed for the diversity of Indian commercial trucks.",
+    "steps": [
+      { "title": "Vehicle Scanner", "text": "3D Camera / LiDAR / Ultrasonic: maps truck dimensions and body configuration" },
+      { "title": "Vehicle Profile Engine", "text": "Identifies dimensions, body type, cabin height, and vulnerable zones" },
+      { "title": "Safety Analysis", "text": "Flags tarpaulins, wooden sideboards, spare tyres, custom bumpers" },
+      { "title": "PLC Control", "text": "Configures washing sequence per vehicle profile" },
+      { "title": "Wash System", "text": "Runs the wash sequence for that vehicle" }
+    ],
+    "sequenceTitle": "Wash sequence",
+    "sequence": ["Pre-rinse", "High-pressure wash", "Controlled mechanical clean", "Underbody", "Final rinse"]
+  },
+  "diversity": {
+    "title": "Built for India's Truck Diversity",
+    "items": ["Wooden sideboards & tarpaulins", "Spare tyres & custom bumpers", "Irregular body structures", "Varying cabin heights"],
+    "closing": "Not a one-size-fits-all system",
+    "image": "/images/truck-front.jpg",
+    "imageAlt": "Front of a hand-painted Indian goods truck with a decorated cabin"
+  },
+  "water": {
+    "eyebrow": "Water treatment & recycling",
+    "title": "The wash system and water system are designed as one infrastructure.",
+    "items": [
+      { "title": "Proposed WTP: 30 KLD", "text": "Water Treatment Plant capacity, a proposed infrastructure target", "status": "Proposed" },
+      { "title": "Reduce Freshwater Demand", "text": "Recovered water re-enters the wash cycle", "status": "" },
+      { "title": "Treat Wash Wastewater", "text": "Solids, oils and particulates separated before reuse", "status": "" },
+      { "title": "Reduce Uncontrolled Discharge", "text": "Professional environmental management system", "status": "" }
+    ],
+    "note": "Specific water-saving percentages are subject to engineering validation."
+  },
+  "driver": {
+    "eyebrow": "Driver value",
+    "title": "AITS improves the experience for the driver.",
+    "journey": [
+      { "title": "Arrive", "text": "Check-in and park at AITS" },
+      { "title": "Truck Wash", "text": "Clean exterior and inspect trailer" },
+      { "title": "Toilet & Shower", "text": "Freshen up in clean facilities" },
+      { "title": "Rest & Refresh", "text": "Use rest area and grab snacks" }
+    ],
+    "facilitiesTitle": "Facilities",
+    "facilities": ["Clean toilets", "Drinking water", "Shower", "Changing area", "Rest area", "Food & snacks", "Truck essentials"]
+  },
+  "cta": {
+    "title": "Running a fleet?",
+    "text": "AITS Wash is built for recurring fleet contracts with one consolidated monthly invoice.",
+    "buttonText": "See the Fleet Program"
+  }
+}

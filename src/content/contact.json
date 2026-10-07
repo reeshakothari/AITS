@@ -1,0 +1,18 @@
+{
+  "seo": {
+    "title": "Contact AITS | Fleet and General Inquiries",
+    "description": "Contact All India TruckShed (AITS) about AITS Wash or make a fleet inquiry."
+  },
+  "hero": {
+    "eyebrow": "Contact",
+    "title": "Talk to AITS",
+    "lead": "Ask a question about AITS Wash or make a fleet inquiry."
+  },
+  "detailsTitle": "Contact details",
+  "detailsMissingText": "Contact details will be published here soon. Please use the form in the meantime.",
+  "formTitle": "Send an inquiry",
+  "formIntro": "Fields marked * are required.",
+  "consentText": "I agree to be contacted by AITS about this inquiry.",
+  "thanksTitle": "Thank you",
+  "thanksText": "Your inquiry has been sent to AITS. We will get back to you soon."
+}

@@ -1,0 +1,632 @@
+# AITS admin panel (Decap CMS). Edits are saved as commits to the site's Git repo,
+# and Netlify rebuilds the site automatically after each save.
+backend:
+  name: github
+  repo: reeshakothari/AITS
+  branch: main
+local_backend: true
+site_url: https://aits.services
+display_url: https://aits.services
+logo_url: /images/logo.png
+media_folder: public/images/uploads
+public_folder: /images/uploads
+collections:
+- name: settings
+  label: Contact details & site settings
+  files:
+  - name: settings
+    label: Contact details & site settings
+    file: src/content/settings.json
+    fields:
+    - label: Company name
+      name: companyName
+      widget: string
+    - label: Brand line (footer)
+      name: brandLine
+      widget: string
+    - label: Email
+      name: email
+      widget: string
+      required: false
+    - label: Phone
+      name: phone
+      widget: string
+      required: false
+      hint: Include +91
+    - label: WhatsApp number
+      name: whatsapp
+      widget: string
+      required: false
+    - label: Address
+      name: address
+      widget: text
+      required: false
+    - label: Business hours
+      name: hours
+      widget: string
+      required: false
+    - label: Google Maps link
+      name: mapUrl
+      widget: string
+      required: false
+    - label: Show preview banner
+      name: previewBanner
+      widget: boolean
+      hint: Turn off at launch.
+    - label: Preview banner text
+      name: previewBannerText
+      widget: string
+- name: pages
+  label: Pages
+  files:
+  - name: home
+    label: Home
+    file: src/content/home.json
+    fields:
+    - label: Search listing (SEO)
+      name: seo
+      widget: object
+      collapsed: true
+      fields:
+      - label: Page title
+        name: title
+        widget: string
+        hint: Shown in Google results and the browser tab. Aim for under 60 characters.
+      - label: Description
+        name: description
+        widget: text
+        hint: Shown under the title in Google results. Aim for 120 to 160 characters.
+    - label: Hero
+      name: hero
+      widget: object
+      fields:
+      - label: Eyebrow
+        name: eyebrow
+        widget: string
+      - label: Headline
+        name: title
+        widget: string
+      - label: Intro
+        name: lead
+        widget: text
+      - label: Motto
+        name: motto
+        widget: string
+      - label: Tags
+        name: tags
+        widget: list
+      - label: Image
+        name: image
+        widget: image
+      - label: Image description (alt text)
+        name: imageAlt
+        widget: string
+    - label: About AITS
+      name: about
+      widget: object
+      fields:
+      - label: Heading
+        name: title
+        widget: string
+      - label: Text
+        name: body
+        widget: text
+      - label: Keywords
+        name: keywords
+        widget: list
+    - label: The problem
+      name: problem
+      widget: object
+      fields:
+      - label: Eyebrow
+        name: eyebrow
+        widget: string
+      - label: Heading
+        name: title
+        widget: string
+      - label: Items
+        name: items
+        widget: list
+        fields:
+        - label: Title
+          name: title
+          widget: string
+        - label: Text
+          name: text
+          widget: text
+    - label: Manual vs AITS comparison
+      name: compare
+      widget: object
+      fields:
+      - label: Manual path label
+        name: manualLabel
+        widget: string
+      - label: Manual path steps
+        name: manualSteps
+        widget: list
+      - label: AITS path label
+        name: aitsLabel
+        widget: string
+      - label: AITS path steps
+        name: aitsSteps
+        widget: list
+    - label: Topic cards
+      name: topics
+      widget: object
+      fields:
+      - label: Eyebrow
+        name: eyebrow
+        widget: string
+      - label: Heading
+        name: title
+        widget: string
+      - label: Cards
+        name: cards
+        widget: list
+        fields:
+        - label: Title
+          name: title
+          widget: string
+        - label: Text
+          name: text
+          widget: text
+        - label: Link
+          name: link
+          widget: string
+        - label: Link text
+          name: linkText
+          widget: string
+    - label: Closing call to action
+      name: cta
+      widget: object
+      fields:
+      - label: Heading
+        name: title
+        widget: string
+      - label: Text
+        name: text
+        widget: text
+      - label: Button text
+        name: buttonText
+        widget: string
+  - name: wash
+    label: AITS Wash
+    file: src/content/wash.json
+    fields:
+    - label: Search listing (SEO)
+      name: seo
+      widget: object
+      collapsed: true
+      fields:
+      - label: Page title
+        name: title
+        widget: string
+        hint: Shown in Google results and the browser tab. Aim for under 60 characters.
+      - label: Description
+        name: description
+        widget: text
+        hint: Shown under the title in Google results. Aim for 120 to 160 characters.
+    - label: Hero
+      name: hero
+      widget: object
+      fields:
+      - label: Eyebrow
+        name: eyebrow
+        widget: string
+      - label: Headline
+        name: title
+        widget: string
+      - label: Intro
+        name: lead
+        widget: text
+      - label: Image
+        name: image
+        widget: image
+      - label: Image description (alt text)
+        name: imageAlt
+        widget: string
+      - label: Image caption
+        name: imageCaption
+        widget: string
+        required: false
+    - label: Key qualities
+      name: pillars
+      widget: list
+      fields:
+      - label: Title
+        name: title
+        widget: string
+      - label: Text
+        name: text
+        widget: string
+      - label: Status label
+        name: status
+        widget: string
+        required: false
+        hint: Optional. For example Proposed or Planned. Leave empty for no label.
+    - label: Automated washing system
+      name: system
+      widget: object
+      fields:
+      - label: Eyebrow
+        name: eyebrow
+        widget: string
+      - label: Heading
+        name: title
+        widget: string
+      - label: Steps
+        name: steps
+        widget: list
+        fields:
+        - label: Title
+          name: title
+          widget: string
+        - label: Text
+          name: text
+          widget: text
+      - label: Wash sequence heading
+        name: sequenceTitle
+        widget: string
+      - label: Wash sequence
+        name: sequence
+        widget: list
+    - label: Truck diversity
+      name: diversity
+      widget: object
+      fields:
+      - label: Heading
+        name: title
+        widget: string
+      - label: Items
+        name: items
+        widget: list
+      - label: Closing line
+        name: closing
+        widget: string
+      - label: Image
+        name: image
+        widget: image
+      - label: Image description (alt text)
+        name: imageAlt
+        widget: string
+    - label: Water treatment
+      name: water
+      widget: object
+      fields:
+      - label: Eyebrow
+        name: eyebrow
+        widget: string
+      - label: Heading
+        name: title
+        widget: string
+      - label: Items
+        name: items
+        widget: list
+        fields:
+        - label: Title
+          name: title
+          widget: string
+        - label: Text
+          name: text
+          widget: text
+        - label: Status label
+          name: status
+          widget: string
+          required: false
+          hint: Optional. For example Proposed or Planned. Leave empty for no label.
+      - label: Note
+        name: note
+        widget: string
+        required: false
+    - label: Driver value
+      name: driver
+      widget: object
+      fields:
+      - label: Eyebrow
+        name: eyebrow
+        widget: string
+      - label: Heading
+        name: title
+        widget: string
+      - label: Journey steps
+        name: journey
+        widget: list
+        fields:
+        - label: Title
+          name: title
+          widget: string
+        - label: Text
+          name: text
+          widget: text
+      - label: Facilities heading
+        name: facilitiesTitle
+        widget: string
+      - label: Facilities
+        name: facilities
+        widget: list
+    - label: Closing call to action
+      name: cta
+      widget: object
+      fields:
+      - label: Heading
+        name: title
+        widget: string
+      - label: Text
+        name: text
+        widget: text
+      - label: Button text
+        name: buttonText
+        widget: string
+  - name: fleet
+    label: Fleet Program
+    file: src/content/fleet.json
+    fields:
+    - label: Search listing (SEO)
+      name: seo
+      widget: object
+      collapsed: true
+      fields:
+      - label: Page title
+        name: title
+        widget: string
+        hint: Shown in Google results and the browser tab. Aim for under 60 characters.
+      - label: Description
+        name: description
+        widget: text
+        hint: Shown under the title in Google results. Aim for 120 to 160 characters.
+    - label: Hero
+      name: hero
+      widget: object
+      fields:
+      - label: Eyebrow
+        name: eyebrow
+        widget: string
+      - label: Headline
+        name: title
+        widget: string
+      - label: Intro
+        name: lead
+        widget: text
+      - label: Image
+        name: image
+        widget: image
+      - label: Image description (alt text)
+        name: imageAlt
+        widget: string
+      - label: Button text
+        name: buttonText
+        widget: string
+    - label: What fleets need
+      name: needs
+      widget: object
+      fields:
+      - label: Eyebrow
+        name: eyebrow
+        widget: string
+      - label: Items
+        name: items
+        widget: list
+        fields:
+        - label: Title
+          name: title
+          widget: string
+        - label: Text
+          name: text
+          widget: text
+    - label: Fleet owner journey
+      name: journey
+      widget: object
+      fields:
+      - label: Eyebrow
+        name: eyebrow
+        widget: string
+      - label: Heading
+        name: title
+        widget: string
+      - label: Steps
+        name: steps
+        widget: list
+        fields:
+        - label: Title
+          name: title
+          widget: string
+        - label: Text
+          name: text
+          widget: text
+    - label: Benefits
+      name: benefits
+      widget: list
+      fields:
+      - label: Title
+        name: title
+        widget: string
+      - label: Text
+        name: text
+        widget: text
+    - label: Fleet contract
+      name: program
+      widget: object
+      fields:
+      - label: Eyebrow
+        name: eyebrow
+        widget: string
+      - label: Heading
+        name: title
+        widget: string
+      - label: Items
+        name: items
+        widget: list
+        fields:
+        - label: Title
+          name: title
+          widget: string
+        - label: Text
+          name: text
+          widget: text
+    - label: Pricing
+      name: pricing
+      widget: object
+      fields:
+      - label: Show pricing on the site
+        name: show
+        widget: boolean
+        hint: Only turn on once AITS has approved the prices.
+      - label: Heading
+        name: title
+        widget: string
+      - label: Price unit
+        name: unit
+        widget: string
+      - label: Tiers
+        name: tiers
+        widget: list
+        fields:
+        - label: Label
+          name: label
+          widget: string
+        - label: Price
+          name: price
+          widget: string
+      - label: Note
+        name: note
+        widget: string
+        required: false
+      - label: Text shown when pricing is hidden
+        name: hiddenText
+        widget: string
+    - label: Closing call to action
+      name: cta
+      widget: object
+      fields:
+      - label: Heading
+        name: title
+        widget: string
+      - label: Text
+        name: text
+        widget: text
+      - label: Button text
+        name: buttonText
+        widget: string
+  - name: vision
+    label: AITS Vision
+    file: src/content/vision.json
+    fields:
+    - label: Search listing (SEO)
+      name: seo
+      widget: object
+      collapsed: true
+      fields:
+      - label: Page title
+        name: title
+        widget: string
+        hint: Shown in Google results and the browser tab. Aim for under 60 characters.
+      - label: Description
+        name: description
+        widget: text
+        hint: Shown under the title in Google results. Aim for 120 to 160 characters.
+    - label: Hero
+      name: hero
+      widget: object
+      fields:
+      - label: Eyebrow
+        name: eyebrow
+        widget: string
+      - label: Headline
+        name: title
+        widget: string
+      - label: Intro
+        name: lead
+        widget: text
+      - label: Background image
+        name: image
+        widget: image
+    - label: Planned-services notice
+      name: notice
+      widget: text
+    - label: Stages heading
+      name: stagesTitle
+      widget: string
+    - label: Stages
+      name: stages
+      widget: list
+      fields:
+      - label: Name
+        name: name
+        widget: string
+      - label: Description
+        name: text
+        widget: string
+      - label: Status label
+        name: status
+        widget: string
+        hint: Use Planned for anything not yet available. Any other label (for example Now open) is shown as current.
+    - label: Expansion heading
+      name: rolloutTitle
+      widget: string
+    - label: Expansion path
+      name: rollout
+      widget: list
+    - label: Closing call to action
+      name: cta
+      widget: object
+      fields:
+      - label: Heading
+        name: title
+        widget: string
+      - label: Text
+        name: text
+        widget: text
+      - label: Button text
+        name: buttonText
+        widget: string
+  - name: contact
+    label: Contact
+    file: src/content/contact.json
+    fields:
+    - label: Search listing (SEO)
+      name: seo
+      widget: object
+      collapsed: true
+      fields:
+      - label: Page title
+        name: title
+        widget: string
+        hint: Shown in Google results and the browser tab. Aim for under 60 characters.
+      - label: Description
+        name: description
+        widget: text
+        hint: Shown under the title in Google results. Aim for 120 to 160 characters.
+    - label: Hero
+      name: hero
+      widget: object
+      fields:
+      - label: Eyebrow
+        name: eyebrow
+        widget: string
+      - label: Headline
+        name: title
+        widget: string
+      - label: Intro
+        name: lead
+        widget: text
+    - label: Contact details heading
+      name: detailsTitle
+      widget: string
+    - label: Text when no contact details are set
+      name: detailsMissingText
+      widget: text
+    - label: Form heading
+      name: formTitle
+      widget: string
+    - label: Form intro
+      name: formIntro
+      widget: string
+    - label: Consent checkbox text
+      name: consentText
+      widget: string
+    - label: Thank-you heading
+      name: thanksTitle
+      widget: string
+    - label: Thank-you text
+      name: thanksText
+      widget: text

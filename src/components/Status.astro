@@ -1,0 +1,6 @@
+---
+interface Props { label?: string }
+const { label } = Astro.props;
+const current = label ? !/planned|proposed|illustrative|future/i.test(label) : false;
+---
+{label && <span class:list={['status', { 'status--current': current }]}>{label}</span>}

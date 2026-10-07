@@ -1,0 +1,50 @@
+{
+  "seo": {
+    "title": "AITS | All India TruckShed: Truck Wash and Trucking Infrastructure",
+    "description": "All India TruckShed (AITS) is building professional truck washing infrastructure for commercial fleets in India, starting with AITS Wash."
+  },
+  "hero": {
+    "eyebrow": "AITS · All India TruckShed",
+    "title": "India's Professional Truck Washing Infrastructure",
+    "lead": "AITS Wash is the first business vertical of All India TruckShed Infrastructure Private Limited.",
+    "motto": "Wash. Record. Maintain. Move.",
+    "tags": ["Technology-enabled", "Professional B2B", "Recurring Fleet Contract Model"],
+    "image": "/images/truck-highway.jpg",
+    "imageAlt": "A loaded Indian goods truck driving on an open highway"
+  },
+  "about": {
+    "title": "Building the future of commercial trucking.",
+    "body": "AITS is building the infrastructure layer that keeps India's commercial trucking ecosystem moving. It starts with AITS Wash: a professional wash infrastructure built specifically for commercial fleets.",
+    "keywords": ["Trucking", "Infrastructure", "Mobility", "Technology", "Network", "Reliability", "Scale"]
+  },
+  "problem": {
+    "eyebrow": "The problem",
+    "title": "Truck washing is still largely informal, manual and untracked.",
+    "items": [
+      { "title": "Manual Labour", "text": "Inconsistent cleaning, heavily dependent on individual effort" },
+      { "title": "Driver Involvement", "text": "Drivers idle during wash, so vehicle downtime increases" },
+      { "title": "Water Wastage", "text": "No recovery or treatment, with uncontrolled discharge" },
+      { "title": "No Digital Records", "text": "No wash history, no fleet-level visibility, no centralized billing" }
+    ]
+  },
+  "compare": {
+    "manualLabel": "Path A: Manual",
+    "manualSteps": ["Truck arrives", "Manual wash", "Driver waits", "Downtime"],
+    "aitsLabel": "Path B: AITS",
+    "aitsSteps": ["Truck arrives", "AITS Wash", "Digital record", "Back on road"]
+  },
+  "topics": {
+    "eyebrow": "Explore AITS",
+    "title": "Wash. Record. Maintain. Move.",
+    "cards": [
+      { "title": "AITS Wash", "text": "A professional wash infrastructure built specifically for commercial fleets.", "link": "/wash/", "linkText": "How AITS Wash works" },
+      { "title": "Fleet Program", "text": "From individual washes to recurring fleet contracts, with one consolidated invoice for the entire fleet.", "link": "/fleet/", "linkText": "See the Fleet Program" },
+      { "title": "AITS Vision", "text": "From Truck Wash to Truck Infrastructure Network.", "link": "/vision/", "linkText": "Read the vision" }
+    ]
+  },
+  "cta": {
+    "title": "Talk to AITS",
+    "text": "Ask a question about AITS Wash or start a fleet inquiry.",
+    "buttonText": "Contact us"
+  }
+}

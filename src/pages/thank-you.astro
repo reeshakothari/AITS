@@ -1,0 +1,14 @@
+---
+import Base from '../layouts/Base.astro';
+import c from '../content/contact.json';
+---
+<Base title={`${c.thanksTitle} | AITS`} description={c.thanksText} noindex>
+  <section class="section">
+    <div class="wrap" style="max-width:44rem">
+      <span class="eyebrow">Inquiry sent</span>
+      <h1>{c.thanksTitle}</h1>
+      <p class="lead" style="margin-top:1rem">{c.thanksText}</p>
+      <div class="hero-actions"><a class="btn btn--outline" href="/">Back to home</a></div>
+    </div>
+  </section>
+</Base>

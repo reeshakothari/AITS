@@ -1,0 +1,80 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Road from '../components/Road.astro';
+import c from '../content/fleet.json';
+const inquiry = '/contact/?type=fleet#inquiry';
+---
+<Base title={c.seo.title} description={c.seo.description} image={c.hero.image}>
+  <Hero eyebrow={c.hero.eyebrow} title={c.hero.title} lead={c.hero.lead} image={c.hero.image} imageAlt={c.hero.imageAlt}>
+    <div class="hero-actions">
+      <a class="btn btn--primary" href={inquiry}>{c.hero.buttonText}</a>
+    </div>
+  </Hero>
+
+  <section class="section section--white">
+    <div class="wrap">
+      <div class="section-head"><span class="eyebrow">{c.needs.eyebrow}</span></div>
+      <div class="grid grid--4">
+        {c.needs.items.map((i) => <div class="feature"><h3>{i.title}</h3><p>{i.text}</p></div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">{c.journey.eyebrow}</span>
+        <h2>{c.journey.title}</h2>
+      </div>
+      <Road steps={c.journey.steps} label="Fleet owner journey" />
+      <div class="grid grid--3" style="margin-top:clamp(40px,5vw,64px)">
+        {c.benefits.map((b) => <div class="card"><h3>{b.title}</h3><p>{b.text}</p></div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--navy">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">{c.program.eyebrow}</span>
+        <h2>{c.program.title}</h2>
+      </div>
+      <div class="grid grid--3">
+        {c.program.items.map((i) => <div class="feature"><h3>{i.title}</h3><p>{i.text}</p></div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--white">
+    <div class="wrap">
+      {c.pricing.show ? (
+        <>
+          <div class="section-head">
+            <span class="eyebrow">Pricing</span>
+            <h2>{c.pricing.title}</h2>
+          </div>
+          <div class="tiers">
+            {c.pricing.tiers.map((t) => (
+              <div class="tier">
+                <span>{t.label}</span>
+                <span class="price">{t.price}</span>
+                <span class="unit">{c.pricing.unit}</span>
+              </div>
+            ))}
+          </div>
+          {c.pricing.note && <p class="note" style="margin-top:1.5rem">{c.pricing.note}</p>}
+        </>
+      ) : (
+        <div class="section-head" style="margin-bottom:0">
+          <span class="eyebrow">Pricing</span>
+          <h2>{c.pricing.hiddenText}</h2>
+          <div><a class="btn btn--outline" href={inquiry} style="margin-top:.5rem">{c.hero.buttonText}</a></div>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <CtaBand title={c.cta.title} text={c.cta.text} buttonText={c.cta.buttonText} href={inquiry} />
+</Base>

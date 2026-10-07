@@ -1,0 +1,109 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import c from '../content/home.json';
+---
+<Base title={c.seo.title} description={c.seo.description} image={c.hero.image}>
+  <Hero eyebrow={c.hero.eyebrow} title={c.hero.title} lead={c.hero.lead} image={c.hero.image} imageAlt={c.hero.imageAlt}>
+    <p class="motto">{c.hero.motto}</p>
+    <ul class="tags">{c.hero.tags.map((t) => <li>{t}</li>)}</ul>
+    <div class="hero-actions">
+      <a class="btn btn--primary" href="/wash/">Explore AITS Wash</a>
+      <a class="btn btn--ghost" href="/contact/?type=fleet#inquiry">Fleet inquiry</a>
+    </div>
+  </Hero>
+
+  <div class="marquee" aria-label={c.about.keywords.join(', ')}>
+    <div class="marquee-track">
+      {[0, 1].map((n) => (
+        <ul aria-hidden="true">
+          {c.about.keywords.map((k) => (
+            <li>{k}<img src="/images/symbol.png" alt="" width="139" height="97" style="filter:brightness(0) invert(1)" /></li>
+          ))}
+        </ul>
+      ))}
+    </div>
+  </div>
+
+  <section class="section section--white">
+    <div class="wrap split" style="align-items:start">
+      <div class="section-head" style="margin-bottom:0">
+        <span class="eyebrow">About AITS</span>
+        <h2>{c.about.title}</h2>
+      </div>
+      <div>
+        <p class="lead" style="color:var(--charcoal)">{c.about.body}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--problem">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">{c.problem.eyebrow}</span>
+        <h2>{c.problem.title}</h2>
+      </div>
+      <div class="grid grid--4">
+        {c.problem.items.map((i) => (
+          <div class="feature"><h3>{i.title}</h3><p>{i.text}</p></div>
+        ))}
+      </div>
+
+      <div class="lanes" aria-label="Manual washing compared with AITS Wash">
+        {[
+          { key: 'a', label: c.compare.manualLabel, steps: c.compare.manualSteps, trucks: 1 },
+          { key: 'b', label: c.compare.aitsLabel, steps: c.compare.aitsSteps, trucks: 2 },
+        ].map((lane) => {
+          const [tag, ...rest] = lane.label.split(':');
+          const name = rest.join(':').trim();
+          return (
+            <div class={`lane lane--${lane.key}`}>
+              <div class="lane-head">
+                <span class="lane-tag">{name ? tag.trim() : ''}</span>
+                <h3>{name || tag}</h3>
+              </div>
+              <div class="lane-road">
+                <ol>{lane.steps.map((s) => <li>{s}</li>)}</ol>
+                <div class="lane-track" aria-hidden="true">
+                  {Array.from({ length: lane.trucks }).map((_, t) => (
+                    <span class={`lane-truck lane-truck--${t + 1}`}>
+                      <svg width="46" height="26" viewBox="0 0 46 26">
+                        <rect x="1" y="2" width="27" height="15" rx="1.5" class="tb" />
+                        <path d="M29 6h8.5l5.5 5.5V17H29z" class="tc" />
+                        <path d="M32 8.5h5l3 3h-8z" class="tw" />
+                        <circle cx="9" cy="19.5" r="3.6" class="tr" />
+                        <circle cx="21" cy="19.5" r="3.6" class="tr" />
+                        <circle cx="37" cy="19.5" r="3.6" class="tr" />
+                      </svg>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--white">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">{c.topics.eyebrow}</span>
+        <h2>{c.topics.title}</h2>
+      </div>
+      <div class="grid grid--3">
+        {c.topics.cards.map((card) => (
+          <a class="topic" href={card.link}>
+            <h3>{card.title}</h3>
+            <p>{card.text}</p>
+            <span class="more">{card.linkText}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title={c.cta.title} text={c.cta.text} buttonText={c.cta.buttonText} href="/contact/" />
+</Base>

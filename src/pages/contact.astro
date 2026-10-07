@@ -1,0 +1,109 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import c from '../content/contact.json';
+import s from '../content/settings.json';
+
+const details = [
+  { label: 'Email', value: s.email, href: s.email ? `mailto:${s.email}` : '' },
+  { label: 'Phone', value: s.phone, href: s.phone ? `tel:${s.phone.replace(/\s/g, '')}` : '' },
+  { label: 'WhatsApp', value: s.whatsapp, href: s.whatsapp ? `https://wa.me/${s.whatsapp.replace(/\D/g, '')}` : '' },
+  { label: 'Address', value: s.address, href: s.mapUrl },
+  { label: 'Hours', value: s.hours, href: '' },
+].filter((d) => d.value);
+---
+<Base title={c.seo.title} description={c.seo.description}>
+  <Hero eyebrow={c.hero.eyebrow} title={c.hero.title} lead={c.hero.lead} />
+
+  <section class="section">
+    <div class="wrap contact-grid">
+      <div>
+        <h2>{c.detailsTitle}</h2>
+        {details.length ? (
+          <dl class="details">
+            {details.map((d) => (
+              <div>
+                <dt>{d.label}</dt>
+                <dd>{d.href ? <a href={d.href}>{d.value}</a> : d.value}</dd>
+              </div>
+            ))}
+          </dl>
+        ) : (
+          <p class="lead" style="margin-top:1rem">{c.detailsMissingText}</p>
+        )}
+        <p style="margin-top:2rem;color:var(--muted)">{s.companyName}</p>
+      </div>
+
+      <form
+        class="form"
+        id="inquiry"
+        name="inquiry"
+        method="POST"
+        action="/thank-you/"
+        data-netlify="true"
+        netlify-honeypot="company_website"
+      >
+        <input type="hidden" name="form-name" value="inquiry" />
+        <p class="hp" aria-hidden="true">
+          <label>Leave this empty <input name="company_website" tabindex="-1" autocomplete="off" /></label>
+        </p>
+        <div>
+          <h2 style="font-size:1.5rem">{c.formTitle}</h2>
+          <p class="form-intro" style="margin-top:.4rem">{c.formIntro}</p>
+        </div>
+
+        <fieldset class="field">
+          <legend>Inquiry type *</legend>
+          <div class="radios">
+            <label><input type="radio" name="inquiry_type" value="General" id="type-general" checked required /> General inquiry</label>
+            <label><input type="radio" name="inquiry_type" value="Fleet" id="type-fleet" /> Fleet inquiry</label>
+          </div>
+        </fieldset>
+
+        <div class="row">
+          <div class="field"><label for="f-name">Name *</label><input id="f-name" name="name" autocomplete="name" required /></div>
+          <div class="field"><label for="f-company">Company <span class="fleet-req" hidden>*</span></label><input id="f-company" name="company" autocomplete="organization" /></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="f-phone">Phone *</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" placeholder="+91" required pattern="[0-9+()\s\-]{8,}" /></div>
+          <div class="field"><label for="f-email">Email *</label><input id="f-email" name="email" type="email" autocomplete="email" required /></div>
+        </div>
+        <div class="row fleet-only" data-fleet>
+          <div class="field"><label for="f-region">City or operating region</label><input id="f-region" name="region" /></div>
+          <div class="field">
+            <label for="f-size">Fleet size</label>
+            <select id="f-size" name="fleet_size">
+              <option value="">Select</option>
+              <option>1–49 trucks</option>
+              <option>50–149 trucks</option>
+              <option>150–249 trucks</option>
+              <option>250+ trucks</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label for="f-message">Message</label><textarea id="f-message" name="message"></textarea></div>
+        <label class="check"><input type="checkbox" name="consent" value="yes" id="f-consent" required /> <span>{c.consentText} *</span></label>
+        <button class="btn btn--primary" type="submit">Send inquiry</button>
+      </form>
+    </div>
+  </section>
+
+  <script>
+    const general = document.getElementById('type-general') as HTMLInputElement | null;
+    const fleet = document.getElementById('type-fleet') as HTMLInputElement | null;
+    const fleetRow = document.querySelector<HTMLElement>('[data-fleet]');
+    const company = document.getElementById('f-company') as HTMLInputElement | null;
+    const req = document.querySelector<HTMLElement>('.fleet-req');
+
+    function sync() {
+      const isFleet = !!fleet?.checked;
+      if (fleetRow) fleetRow.hidden = !isFleet;
+      if (company) company.required = isFleet;
+      if (req) req.hidden = !isFleet;
+    }
+    if (new URLSearchParams(location.search).get('type') === 'fleet' && fleet) fleet.checked = true;
+    general?.addEventListener('change', sync);
+    fleet?.addEventListener('change', sync);
+    sync();
+  </script>
+</Base>

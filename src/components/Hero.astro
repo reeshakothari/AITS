@@ -1,0 +1,39 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lead?: string;
+  image?: string;
+  imageAlt?: string;
+  caption?: string;
+  square?: boolean;
+  /** Full-bleed background image behind a navy overlay (used instead of a side image) */
+  bg?: string;
+}
+const { eyebrow, title, lead, image, imageAlt = '', caption, square = false, bg } = Astro.props;
+const words = title.split(' ');
+---
+<section class:list={['hero', { 'hero--split': image }]}>
+  {bg && <div class="hero-bg" style={`background-image:url(${bg})`} aria-hidden="true"></div>}
+  <div class="hero-lanes" aria-hidden="true"><span></span></div>
+  <div class="wrap">
+    <div class="hero-copy">
+      {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+      <h1 aria-label={title}>
+        {words.map((w, i) => (
+          <>
+            <span class="w" aria-hidden="true"><span style={`--i:${i}`}>{w}</span></span>{i < words.length - 1 ? ' ' : ''}
+          </>
+        ))}
+      </h1>
+      {lead && <p class="lead">{lead}</p>}
+      <slot />
+    </div>
+    {image && (
+      <figure class:list={['hero-media', { 'hero-media--square': square }]} style="margin:0">
+        <img src={image} alt={imageAlt} width="800" height="1000" fetchpriority="high" />
+        {caption && <figcaption>{caption}</figcaption>}
+      </figure>
+    )}
+  </div>
+</section>
