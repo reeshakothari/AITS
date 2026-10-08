@@ -33,10 +33,11 @@ collections:
       widget: string
       required: false
       hint: Include +91
-    - label: WhatsApp number
+    - label: WhatsApp number (receives all inquiries)
       name: whatsapp
       widget: string
       required: false
+      hint: Include country code, for example +91 98XXX XXXXX
     - label: Address
       name: address
       widget: text
@@ -83,6 +84,11 @@ collections:
       - label: Eyebrow
         name: eyebrow
         widget: string
+      - label: Status pill
+        name: status
+        widget: string
+        required: false
+        hint: 'For example: In planning. Leave empty to hide.'
       - label: Headline
         name: title
         widget: string
@@ -229,6 +235,11 @@ collections:
         name: imageCaption
         widget: string
         required: false
+    - label: Planned notice (shown under the hero)
+      name: notice
+      widget: text
+      required: false
+      hint: Leave empty to hide the notice.
     - label: Key qualities
       name: pillars
       widget: list
@@ -396,6 +407,11 @@ collections:
       - label: Button text
         name: buttonText
         widget: string
+    - label: Planned notice (shown under the hero)
+      name: notice
+      widget: text
+      required: false
+      hint: Leave empty to hide the notice.
     - label: What fleets need
       name: needs
       widget: object
@@ -540,13 +556,14 @@ collections:
       - label: Background image
         name: image
         widget: image
-    - label: Planned-services notice
+    - label: Planned notice (shown under the hero)
       name: notice
       widget: text
-    - label: Stages heading
+      required: false
+    - label: Steps heading
       name: stagesTitle
       widget: string
-    - label: Stages
+    - label: Steps
       name: stages
       widget: list
       fields:
@@ -559,13 +576,24 @@ collections:
       - label: Status label
         name: status
         widget: string
-        hint: Use Planned for anything not yet available. Any other label (for example Now open) is shown as current.
+        hint: 'For example: Planned · First step'
+    - label: '"More to come" card title'
+      name: nextTitle
+      widget: string
+      required: false
+      hint: Leave empty to hide the card.
+    - label: '"More to come" card text'
+      name: nextText
+      widget: string
+      required: false
     - label: Expansion heading
       name: rolloutTitle
       widget: string
     - label: Expansion path
       name: rollout
       widget: list
+      required: false
+      hint: Leave empty to hide the expansion section.
     - label: Closing call to action
       name: cta
       widget: object
@@ -621,12 +649,9 @@ collections:
     - label: Form intro
       name: formIntro
       widget: string
-    - label: Consent checkbox text
-      name: consentText
+    - label: WhatsApp button text
+      name: whatsappButtonText
       widget: string
-    - label: Thank-you heading
-      name: thanksTitle
+    - label: Text shown until the WhatsApp number is set
+      name: whatsappMissingText
       widget: string
-    - label: Thank-you text
-      name: thanksText
-      widget: text

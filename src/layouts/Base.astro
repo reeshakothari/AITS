@@ -34,7 +34,7 @@ const year = new Date().getFullYear();
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex" />}
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="AITS · All India TruckShed" />
+    <meta property="og:site_name" content="AITS · All India Truckshed" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -62,7 +62,7 @@ const year = new Date().getFullYear();
     <header class="site-header">
       <div class="wrap">
         <a class="brand" href="/" aria-label="AITS home">
-          <img src="/images/logo.png" alt="AITS · All India TruckShed" width="520" height="122" />
+          <img src="/images/logo.png" alt="AITS · All India Truckshed" width="520" height="122" />
         </a>
         <button class="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false" aria-label="Menu">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
@@ -83,7 +83,7 @@ const year = new Date().getFullYear();
     <footer class="site-footer">
       <div class="wrap">
         <div>
-          <img src="/images/logo-white.png" alt="AITS · All India TruckShed" width="520" height="122" loading="lazy" />
+          <img src="/images/logo-white.png" alt="AITS · All India Truckshed" width="520" height="122" loading="lazy" />
           <p class="footer-line">{settings.brandLine}</p>
         </div>
         <div>
@@ -96,6 +96,7 @@ const year = new Date().getFullYear();
         <div>
           <h2>Contact</h2>
           <ul>
+            {settings.whatsapp && <li><a href={`https://wa.me/${settings.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener">WhatsApp: {settings.whatsapp}</a></li>}
             {settings.email && <li><a href={`mailto:${settings.email}`}>{settings.email}</a></li>}
             {settings.phone && <li><a href={`tel:${settings.phone.replace(/\s/g, '')}`}>{settings.phone}</a></li>}
             {settings.address && <li>{settings.address}</li>}

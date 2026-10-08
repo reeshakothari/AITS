@@ -507,3 +507,32 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
 
 .skip { position: absolute; left: -9999px; top: 8px; background: var(--white); padding: 10px 14px; z-index: 100; }
 .skip:focus { left: 8px; }
+
+/* "Planned" notice bar under page heroes */
+.plan-bar { background: var(--amber-soft); border-bottom: 1px solid #f1d9ad; color: #5e3900; }
+.plan-bar .wrap { display: flex; align-items: center; gap: 14px; padding-block: 14px; }
+.plan-bar p { font-weight: 600; font-size: .95rem; }
+.plan-bar .status { flex: none; background: #fbe2b6; }
+@media (max-width: 600px) { .plan-bar .wrap { align-items: flex-start; flex-direction: column; gap: 8px; } }
+
+/* Status pill next to the hero eyebrow */
+.hero-status {
+  display: inline-block; margin-left: 12px; padding: 5px 9px; border-radius: 999px;
+  background: rgba(253, 241, 220, .14); border: 1px solid rgba(253, 220, 160, .5); color: #fcd9a0;
+  font-size: .68rem; letter-spacing: .14em; vertical-align: 1px;
+}
+
+/* Vision: step cards */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: 16px; max-width: 48rem; }
+.steps .stage { min-height: 11rem; }
+.stage--next { background: transparent; border: 2px dashed #c9d2de; border-top: 2px dashed #c9d2de; }
+.stage--next h3 { color: var(--muted); }
+
+/* WhatsApp inquiry button */
+.btn--wa { background: #1fa855; color: var(--white); }
+.btn--wa:hover { background: #178a45; }
+.btn--wa:disabled { background: #c9d2de; color: #4b5563; cursor: not-allowed; }
+.btn--wa::after { content: none; }
+.wa-missing { display: grid; gap: 8px; justify-items: start; }
+.form-error { color: #a1302b; font-weight: 600; font-size: .95rem; }
+.nav .btn[aria-current="page"] { color: var(--white); }

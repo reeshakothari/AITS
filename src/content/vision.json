@@ -1,7 +1,7 @@
 {
   "seo": {
     "title": "AITS Vision | From Truck Wash to Truck Infrastructure Network",
-    "description": "AITS plans to grow from truck washing into a network of truck care, parking, driver rest, EV charging and integrated truck infrastructure centres across India."
+    "description": "AITS is building the infrastructure layer that keeps India's commercial trucking ecosystem moving, starting with AITS Wash."
   },
   "hero": {
     "eyebrow": "AITS Vision",
@@ -9,21 +9,22 @@
     "lead": "AITS is building the infrastructure layer that keeps India's commercial trucking ecosystem moving.",
     "image": "/images/vision-texture.jpg"
   },
-  "notice": "This page describes AITS's future plans. Stages marked Planned are not currently available.",
-  "stagesTitle": "Six stages",
+  "notice": "AITS is being built step by step. The first step is AITS Wash, which is currently being planned. Plans and timelines may change.",
+  "stagesTitle": "Step by step",
   "stages": [
-    { "name": "AITS WASH", "text": "Truck washing + water recycling", "status": "First vertical" },
-    { "name": "AITS CARE", "text": "Maintenance + truck-care services", "status": "Planned" },
-    { "name": "AITS PARK", "text": "Secure truck parking", "status": "Planned" },
-    { "name": "AITS REST", "text": "Driver facilities", "status": "Planned" },
-    { "name": "AITS CHARGE", "text": "EV truck charging", "status": "Planned" },
-    { "name": "AITS HUB", "text": "Integrated truck infrastructure centres", "status": "Planned" }
+    {
+      "name": "AITS WASH",
+      "text": "Truck washing + water recycling",
+      "status": "Planned · First step"
+    }
   ],
   "rolloutTitle": "Expansion path",
-  "rollout": ["Bhiwandi Pilot", "Maharashtra", "Western India", "All India"],
+  "rollout": [],
   "cta": {
     "title": "Partner with AITS",
-    "text": "Interested in AITS Wash today or in the network AITS is planning? Get in touch.",
+    "text": "Interested in AITS Wash or what AITS is planning? Get in touch.",
     "buttonText": "Contact us"
-  }
+  },
+  "nextTitle": "More to come",
+  "nextText": "Further steps will be announced as AITS grows."
 }

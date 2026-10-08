@@ -9,8 +9,10 @@ interface Props {
   square?: boolean;
   /** Full-bleed background image behind a navy overlay (used instead of a side image) */
   bg?: string;
+  /** Small status pill above the eyebrow, e.g. "In planning" */
+  status?: string;
 }
-const { eyebrow, title, lead, image, imageAlt = '', caption, square = false, bg } = Astro.props;
+const { eyebrow, title, lead, image, imageAlt = '', caption, square = false, bg, status } = Astro.props;
 const words = title.split(' ');
 ---
 <section class:list={['hero', { 'hero--split': image }]}>
@@ -18,7 +20,7 @@ const words = title.split(' ');
   <div class="hero-lanes" aria-hidden="true"><span></span></div>
   <div class="wrap">
     <div class="hero-copy">
-      {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+      {eyebrow && <span class="eyebrow">{eyebrow}{status && <span class="hero-status">{status}</span>}</span>}
       <h1 aria-label={title}>
         {words.map((w, i) => (
           <>

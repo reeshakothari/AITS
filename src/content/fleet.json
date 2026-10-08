@@ -14,53 +14,94 @@
   "needs": {
     "eyebrow": "What fleets need",
     "items": [
-      { "title": "Fast Washing", "text": "Minimal downtime per truck" },
-      { "title": "Consistent Quality", "text": "Defined, repeatable process" },
-      { "title": "Water Management", "text": "Treatment and responsible use" },
-      { "title": "Digital Records", "text": "Centralized billing and fleet visibility" }
+      {
+        "title": "Fast Washing",
+        "text": "Minimal downtime per truck"
+      },
+      {
+        "title": "Consistent Quality",
+        "text": "Defined, repeatable process"
+      },
+      {
+        "title": "Water Management",
+        "text": "Treatment and responsible use"
+      },
+      {
+        "title": "Digital Records",
+        "text": "Centralized billing and fleet visibility"
+      }
     ]
   },
   "journey": {
     "eyebrow": "Fleet owner journey",
     "title": "How a fleet wash is recorded and billed",
     "steps": [
-      { "title": "Truck Registered", "text": "Driver adds truck to system" },
-      { "title": "AITS Wash", "text": "Truck receives professional wash" },
-      { "title": "Digital Record", "text": "Wash details logged digitally" },
-      { "title": "Dashboard Updated", "text": "Fleet view reflects new record" },
-      { "title": "Monthly Invoice", "text": "Consolidated billing issued" }
+      {
+        "title": "Truck Registered",
+        "text": "Driver adds truck to system"
+      },
+      {
+        "title": "AITS Wash",
+        "text": "Truck receives professional wash"
+      },
+      {
+        "title": "Digital Record",
+        "text": "Wash details logged digitally"
+      },
+      {
+        "title": "Dashboard Updated",
+        "text": "Fleet view reflects new record"
+      },
+      {
+        "title": "Monthly Invoice",
+        "text": "Consolidated billing issued"
+      }
     ]
   },
   "benefits": [
-    { "title": "Centralized Billing", "text": "One consolidated invoice per month" },
-    { "title": "Fleet Visibility", "text": "Wash history, records, and fleet analytics" },
-    { "title": "Less Operational Friction", "text": "Reduced driver involvement and standardized process" }
+    {
+      "title": "Centralized Billing",
+      "text": "One consolidated invoice per month"
+    },
+    {
+      "title": "Fleet Visibility",
+      "text": "Wash history, records, and fleet analytics"
+    },
+    {
+      "title": "Less Operational Friction",
+      "text": "Reduced driver involvement and standardized process"
+    }
   ],
   "program": {
     "eyebrow": "AITS Wash Program",
     "title": "How the fleet contract works",
     "items": [
-      { "title": "Fleet Commitment", "text": "Minimum monthly wash commitment · Fixed price per truck per wash" },
-      { "title": "Digital Wash Record", "text": "Every wash captures: Vehicle ID · Date · Time · Location · Wash Type · Amount" },
-      { "title": "Monthly Billing", "text": "One consolidated invoice for the entire fleet · No per-driver payment friction" }
+      {
+        "title": "Fleet Commitment",
+        "text": "Minimum monthly wash commitment of 30 trucks · Fixed price per truck per wash"
+      },
+      {
+        "title": "Digital Wash Record",
+        "text": "Every wash captures: Vehicle ID · Date · Time · Location · Wash Type · Amount"
+      },
+      {
+        "title": "Monthly Billing",
+        "text": "One consolidated invoice for the entire fleet · No per-driver payment friction"
+      }
     ]
   },
   "pricing": {
     "show": false,
     "title": "Proposed / Indicative Pricing",
     "unit": "per truck per wash",
-    "tiers": [
-      { "label": "Individual Truck", "price": "₹599" },
-      { "label": "50–149 Trucks", "price": "₹499" },
-      { "label": "150–249 Trucks", "price": "₹450" },
-      { "label": "250+ Trucks", "price": "₹399" }
-    ],
-    "note": "Proposed / indicative pricing, subject to confirmation.",
+    "tiers": [],
+    "note": "",
     "hiddenText": "Fleet pricing is shared on request, based on fleet size and wash frequency."
   },
   "cta": {
     "title": "Make a fleet inquiry",
     "text": "Tell us about your fleet and AITS will get back to you.",
     "buttonText": "Request a fleet quote"
-  }
+  },
+  "notice": "The AITS Fleet Program is planned and will be available once AITS Wash is operating. The details below describe the proposed program."
 }

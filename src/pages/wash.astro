@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import CtaBand from '../components/CtaBand.astro';
 import Road from '../components/Road.astro';
+import Notice from '../components/Notice.astro';
 import Status from '../components/Status.astro';
 import c from '../content/wash.json';
 ---
@@ -13,6 +14,7 @@ import c from '../content/wash.json';
       <a class="btn btn--ghost" href="/fleet/">Fleet Program</a>
     </div>
   </Hero>
+  <Notice text={c.notice} />
 
   <section class="section section--white">
     <div class="wrap">

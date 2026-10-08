@@ -4,10 +4,13 @@ import Hero from '../components/Hero.astro';
 import c from '../content/contact.json';
 import s from '../content/settings.json';
 
+// All inquiries go to AITS on WhatsApp. Digits only, with country code (e.g. 91XXXXXXXXXX).
+const waNumber = (s.whatsapp || '').replace(/\D/g, '');
+
 const details = [
-  { label: 'Email', value: s.email, href: s.email ? `mailto:${s.email}` : '' },
+  { label: 'WhatsApp', value: s.whatsapp, href: waNumber ? `https://wa.me/${waNumber}` : '' },
   { label: 'Phone', value: s.phone, href: s.phone ? `tel:${s.phone.replace(/\s/g, '')}` : '' },
-  { label: 'WhatsApp', value: s.whatsapp, href: s.whatsapp ? `https://wa.me/${s.whatsapp.replace(/\D/g, '')}` : '' },
+  { label: 'Email', value: s.email, href: s.email ? `mailto:${s.email}` : '' },
   { label: 'Address', value: s.address, href: s.mapUrl },
   { label: 'Hours', value: s.hours, href: '' },
 ].filter((d) => d.value);
@@ -24,7 +27,7 @@ const details = [
             {details.map((d) => (
               <div>
                 <dt>{d.label}</dt>
-                <dd>{d.href ? <a href={d.href}>{d.value}</a> : d.value}</dd>
+                <dd>{d.href ? <a href={d.href} target={d.label === 'WhatsApp' ? '_blank' : undefined} rel="noopener">{d.value}</a> : d.value}</dd>
               </div>
             ))}
           </dl>
@@ -34,19 +37,7 @@ const details = [
         <p style="margin-top:2rem;color:var(--muted)">{s.companyName}</p>
       </div>
 
-      <form
-        class="form"
-        id="inquiry"
-        name="inquiry"
-        method="POST"
-        action="/thank-you/"
-        data-netlify="true"
-        netlify-honeypot="company_website"
-      >
-        <input type="hidden" name="form-name" value="inquiry" />
-        <p class="hp" aria-hidden="true">
-          <label>Leave this empty <input name="company_website" tabindex="-1" autocomplete="off" /></label>
-        </p>
+      <form class="form" id="inquiry" data-wa={waNumber} novalidate>
         <div>
           <h2 style="font-size:1.5rem">{c.formTitle}</h2>
           <p class="form-intro" style="margin-top:.4rem">{c.formIntro}</p>
@@ -55,7 +46,7 @@ const details = [
         <fieldset class="field">
           <legend>Inquiry type *</legend>
           <div class="radios">
-            <label><input type="radio" name="inquiry_type" value="General" id="type-general" checked required /> General inquiry</label>
+            <label><input type="radio" name="inquiry_type" value="General" id="type-general" checked /> General inquiry</label>
             <label><input type="radio" name="inquiry_type" value="Fleet" id="type-fleet" /> Fleet inquiry</label>
           </div>
         </fieldset>
@@ -63,10 +54,6 @@ const details = [
         <div class="row">
           <div class="field"><label for="f-name">Name *</label><input id="f-name" name="name" autocomplete="name" required /></div>
           <div class="field"><label for="f-company">Company <span class="fleet-req" hidden>*</span></label><input id="f-company" name="company" autocomplete="organization" /></div>
-        </div>
-        <div class="row">
-          <div class="field"><label for="f-phone">Phone *</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" placeholder="+91" required pattern="[0-9+()\s\-]{8,}" /></div>
-          <div class="field"><label for="f-email">Email *</label><input id="f-email" name="email" type="email" autocomplete="email" required /></div>
         </div>
         <div class="row fleet-only" data-fleet>
           <div class="field"><label for="f-region">City or operating region</label><input id="f-region" name="region" /></div>
@@ -82,18 +69,30 @@ const details = [
           </div>
         </div>
         <div class="field"><label for="f-message">Message</label><textarea id="f-message" name="message"></textarea></div>
-        <label class="check"><input type="checkbox" name="consent" value="yes" id="f-consent" required /> <span>{c.consentText} *</span></label>
-        <button class="btn btn--primary" type="submit">Send inquiry</button>
+
+        <p class="form-error" role="alert" hidden></p>
+        {waNumber ? (
+          <button class="btn btn--wa" type="submit">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
+            {c.whatsappButtonText}
+          </button>
+        ) : (
+          <div class="wa-missing">
+            <button class="btn btn--wa" type="button" disabled>{c.whatsappButtonText}</button>
+            <p class="form-intro">{c.whatsappMissingText}</p>
+          </div>
+        )}
       </form>
     </div>
   </section>
 
   <script>
-    const general = document.getElementById('type-general') as HTMLInputElement | null;
+    const form = document.getElementById('inquiry') as HTMLFormElement | null;
     const fleet = document.getElementById('type-fleet') as HTMLInputElement | null;
     const fleetRow = document.querySelector<HTMLElement>('[data-fleet]');
     const company = document.getElementById('f-company') as HTMLInputElement | null;
     const req = document.querySelector<HTMLElement>('.fleet-req');
+    const error = document.querySelector<HTMLElement>('.form-error');
 
     function sync() {
       const isFleet = !!fleet?.checked;
@@ -102,8 +101,36 @@ const details = [
       if (req) req.hidden = !isFleet;
     }
     if (new URLSearchParams(location.search).get('type') === 'fleet' && fleet) fleet.checked = true;
-    general?.addEventListener('change', sync);
-    fleet?.addEventListener('change', sync);
+    document.querySelectorAll('input[name="inquiry_type"]').forEach((r) => r.addEventListener('change', sync));
     sync();
+
+    form?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const number = form.dataset.wa;
+      if (!number) return;
+      const data = new FormData(form);
+      const get = (k: string) => String(data.get(k) ?? '').trim();
+      const isFleet = get('inquiry_type') === 'Fleet';
+
+      const missing: string[] = [];
+      if (!get('name')) missing.push('your name');
+      if (isFleet && !get('company')) missing.push('your company');
+      if (missing.length) {
+        if (error) { error.textContent = `Please add ${missing.join(' and ')}.`; error.hidden = false; }
+        return;
+      }
+      if (error) error.hidden = true;
+
+      const lines = [
+        `New website inquiry (${isFleet ? 'Fleet' : 'General'})`,
+        `Name: ${get('name')}`,
+        get('company') && `Company: ${get('company')}`,
+        isFleet && get('region') && `City or region: ${get('region')}`,
+        isFleet && get('fleet_size') && `Fleet size: ${get('fleet_size')}`,
+        get('message') && `Message: ${get('message')}`,
+      ].filter(Boolean);
+
+      window.open(`https://wa.me/${number}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
+    });
   </script>
 </Base>

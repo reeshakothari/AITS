@@ -1,0 +1,13 @@
+---
+// Full-width "planned" notice shown under a page hero.
+interface Props { text?: string }
+const { text } = Astro.props;
+---
+{text && (
+  <div class="plan-bar" role="note">
+    <div class="wrap">
+      <span class="status">Planned</span>
+      <p>{text}</p>
+    </div>
+  </div>
+)}

@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import CtaBand from '../components/CtaBand.astro';
 import Road from '../components/Road.astro';
+import Notice from '../components/Notice.astro';
 import c from '../content/fleet.json';
 const inquiry = '/contact/?type=fleet#inquiry';
 ---
@@ -12,6 +13,7 @@ const inquiry = '/contact/?type=fleet#inquiry';
       <a class="btn btn--primary" href={inquiry}>{c.hero.buttonText}</a>
     </div>
   </Hero>
+  <Notice text={c.notice} />
 
   <section class="section section--white">
     <div class="wrap">

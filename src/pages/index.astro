@@ -5,7 +5,7 @@ import CtaBand from '../components/CtaBand.astro';
 import c from '../content/home.json';
 ---
 <Base title={c.seo.title} description={c.seo.description} image={c.hero.image}>
-  <Hero eyebrow={c.hero.eyebrow} title={c.hero.title} lead={c.hero.lead} image={c.hero.image} imageAlt={c.hero.imageAlt}>
+  <Hero eyebrow={c.hero.eyebrow} title={c.hero.title} lead={c.hero.lead} image={c.hero.image} imageAlt={c.hero.imageAlt} status={c.hero.status}>
     <p class="motto">{c.hero.motto}</p>
     <ul class="tags">{c.hero.tags.map((t) => <li>{t}</li>)}</ul>
     <div class="hero-actions">
