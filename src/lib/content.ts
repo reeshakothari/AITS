@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { serverEnv } from './env';
 import global from '../content/global.json';
 import settings from '../content/settings.json';
 import home from '../content/home.json';
@@ -14,16 +15,22 @@ export type Content = typeof defaults;
 export type ContentKey = keyof Content;
 export const CONTENT_KEYS = Object.keys(defaults) as ContentKey[];
 
-export const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL ?? '';
-export const SUPABASE_ANON_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? '';
-export const hasSupabase = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+const TABLE = 'aits_site_content';
+const HISTORY = 'aits_site_publish_history';
+export const BUCKET = 'aits-media';
 
-/** Server-side client. Pass the admin's access token to read drafts under RLS. */
-export function serverClient(accessToken?: string): SupabaseClient {
-  return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+export const hasSupabase = () => Boolean(serverEnv.supabaseUrl() && (serverEnv.supabaseServiceKey() || serverEnv.supabaseAnonKey()));
+/** Drafts and writes need the server-only service key; it never reaches the browser. */
+export const canWrite = () => Boolean(serverEnv.supabaseUrl() && serverEnv.supabaseServiceKey());
+/** Local demo store, used only in `astro dev` when Supabase is not configured. */
+export const demoMode = () => import.meta.env.DEV && !hasSupabase();
+
+let cached: SupabaseClient | null = null;
+function db(): SupabaseClient {
+  cached ??= createClient(serverEnv.supabaseUrl(), serverEnv.supabaseServiceKey() || serverEnv.supabaseAnonKey(), {
     auth: { persistSession: false, autoRefreshToken: false },
-    global: accessToken ? { headers: { Authorization: `Bearer ${accessToken}` } } : {},
   });
+  return cached;
 }
 
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
@@ -36,21 +43,6 @@ function merge<T>(base: T, over: unknown): T {
   return out as T;
 }
 
-/** Local demo store, used only in `astro dev` when Supabase is not configured. */
-export const demoMode = !hasSupabase && import.meta.env.DEV;
-const demoFile = (status: string) => `.astro/demo-${status}.json`;
-
-export async function readDemo(status: 'published' | 'draft'): Promise<Partial<Content> | null> {
-  if (!demoMode) return null;
-  const fs = await import('node:fs/promises');
-  try { return JSON.parse(await fs.readFile(demoFile(status), 'utf8')); } catch { return null; }
-}
-export async function writeDemo(status: 'published' | 'draft', data: Partial<Content>) {
-  const fs = await import('node:fs/promises');
-  await fs.mkdir('.astro', { recursive: true });
-  await fs.writeFile(demoFile(status), JSON.stringify(data, null, 2));
-}
-
 function applyRows(rows: { key: string; data: unknown }[]): Content {
   const content = structuredClone(defaults) as Record<string, unknown>;
   for (const row of rows) {
@@ -59,28 +51,104 @@ function applyRows(rows: { key: string; data: unknown }[]): Content {
   return content as Content;
 }
 
-export async function loadContent(status: 'published' | 'draft' = 'published', accessToken?: string): Promise<Content> {
-  if (demoMode) {
-    const stored = (await readDemo(status)) ?? (status === 'draft' ? await readDemo('published') : null);
-    return applyRows(Object.entries(stored ?? {}).map(([key, data]) => ({ key, data })));
+/* ---------------- demo store (local dev only) ---------------- */
+
+const demoFile = (status: string) => `.astro/demo-${status}.json`;
+async function readDemo(status: 'published' | 'draft'): Promise<Record<string, unknown> | null> {
+  const fs = await import('node:fs/promises');
+  try { return JSON.parse(await fs.readFile(demoFile(status), 'utf8')); } catch { return null; }
+}
+async function writeDemo(status: 'published' | 'draft', data: unknown) {
+  const fs = await import('node:fs/promises');
+  await fs.mkdir('.astro', { recursive: true });
+  await fs.writeFile(demoFile(status), JSON.stringify(data, null, 2));
+}
+
+/* ---------------- reads ---------------- */
+
+async function rows(status: 'published' | 'draft'): Promise<{ key: string; data: unknown }[]> {
+  if (demoMode()) {
+    const stored = await readDemo(status);
+    return Object.entries(stored ?? {}).map(([key, data]) => ({ key, data }));
   }
-  if (!hasSupabase) return structuredClone(defaults);
-  const { data, error } = await serverClient(accessToken).from('aits_site_content').select('key,data').eq('status', status);
+  if (!hasSupabase()) return [];
+  const { data, error } = await db().from(TABLE).select('key,data').eq('status', status);
   if (error) {
-    console.error('[content] Supabase read failed, using local defaults:', error.message);
-    return structuredClone(defaults);
+    console.error(`[content] Supabase read of ${status} failed, using local defaults:`, error.message);
+    return [];
   }
-  return applyRows(data ?? []);
+  return data ?? [];
 }
 
-/** True when the token belongs to a signed-in user listed in aits_site_admins. */
-export async function verifyAdmin(token: string | undefined): Promise<boolean> {
-  if (!hasSupabase || !token) return false;
-  const client = serverClient(token);
-  const { data: user, error } = await client.auth.getUser(token);
-  if (error || !user?.user) return false;
-  const { data: isAdmin } = await client.rpc('aits_is_site_admin');
-  return isAdmin === true;
+export async function loadContent(status: 'published' | 'draft' = 'published'): Promise<Content> {
+  const published = await rows('published');
+  if (status === 'published' || (!demoMode() && !canWrite())) return applyRows(published);
+  // Keys never edited have no draft row yet; show what is live for those.
+  const byKey = new Map(published.map((r) => [r.key, r]));
+  for (const d of await rows('draft')) byKey.set(d.key, d);
+  return applyRows([...byKey.values()]);
 }
 
-export const ADMIN_COOKIE = 'aits-admin-token';
+/* ---------------- writes (admin API only) ---------------- */
+
+export async function saveDraft(key: ContentKey, data: unknown) {
+  if (demoMode()) {
+    const draft = (await readDemo('draft')) ?? (await readDemo('published')) ?? {};
+    draft[key] = data;
+    return writeDemo('draft', draft);
+  }
+  const { error } = await db().from(TABLE).upsert(
+    { key, status: 'draft', data, updated_at: new Date().toISOString() },
+    { onConflict: 'key,status' },
+  );
+  if (error) throw new Error(error.message);
+}
+
+export async function publishDrafts(): Promise<string> {
+  const stamp = new Date().toISOString();
+  if (demoMode()) {
+    await writeDemo('published', await loadContent('draft'));
+    return stamp;
+  }
+  const drafts = await rows('draft');
+  if (!drafts.length) return stamp;
+  const { error } = await db().from(TABLE).upsert(
+    drafts.map((d) => ({ key: d.key, status: 'published', data: d.data, updated_at: stamp })),
+    { onConflict: 'key,status' },
+  );
+  if (error) throw new Error(error.message);
+  // Keep a snapshot when the history table exists; publishing does not depend on it.
+  const { error: historyError } = await db().from(HISTORY).insert({
+    published_at: stamp, snapshot: Object.fromEntries(drafts.map((d) => [d.key, d.data])),
+  });
+  if (historyError) console.warn('[content] publish history not recorded:', historyError.message);
+  return stamp;
+}
+
+/** Drops all drafts, so the editor shows what is live again. */
+export async function discardDrafts() {
+  if (demoMode()) return writeDemo('draft', (await readDemo('published')) ?? {});
+  const { error } = await db().from(TABLE).delete().eq('status', 'draft');
+  if (error) throw new Error(error.message);
+}
+
+/** True when the draft differs from what is live. */
+export async function hasUnpublished() {
+  return JSON.stringify(await loadContent('draft')) !== JSON.stringify(await loadContent('published'));
+}
+
+export async function demoUpload(name: string, base64: string) {
+  const fs = await import('node:fs/promises');
+  const file = `${Date.now()}-${name}`;
+  await fs.mkdir('public/images/uploads', { recursive: true });
+  await fs.writeFile(`public/images/uploads/${file}`, Buffer.from(base64, 'base64'));
+  return `/images/uploads/${file}`;
+}
+
+/** A one-time URL the browser uploads the image to directly, so large files skip the server body limit. */
+export async function signedUpload(name: string) {
+  const path = `${Date.now()}-${name}`;
+  const { data, error } = await db().storage.from(BUCKET).createSignedUploadUrl(path);
+  if (error || !data) throw new Error(error?.message ?? 'Could not prepare the upload.');
+  return { signedUrl: data.signedUrl, publicUrl: db().storage.from(BUCKET).getPublicUrl(path).data.publicUrl };
+}

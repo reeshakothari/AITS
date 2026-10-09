@@ -2,20 +2,14 @@
 // Text marked [data-e] is edited in place, images [data-e-img]/[data-e-bg] open an image dialog,
 // links [data-e-href] get a link field, and [data-e-list] containers get add/move/duplicate/delete controls.
 // Everything else is reachable from the Settings drawer. Edits autosave to the draft; Publish makes them live.
-import { adminClient, setAdminCookie } from './admin-auth';
-
 type Json = string | number | boolean | null | Json[] | { [k: string]: Json };
 type Obj = { [k: string]: Json };
 
 const boot = JSON.parse(document.getElementById('aits-editor-data')!.textContent!);
-const { page, demo, supabaseUrl, anonKey, cookie } = boot as {
-  page: string; demo: boolean; supabaseUrl: string; anonKey: string; cookie: string;
-};
+const { page, demo } = boot as { page: string; demo: boolean };
 const data: Obj = boot.content;
 let unpublished: boolean = boot.unpublished;
 const dirty = new Set<string>();
-const sb = demo ? null : adminClient(supabaseUrl, anonKey, cookie);
-const BUCKET = 'aits-media';
 
 /* ---------------- helpers ---------------- */
 
@@ -62,9 +56,14 @@ function refreshPublishState() {
   publishBtn.title = unpublished ? 'Make your changes live' : 'The live site already matches this draft';
 }
 
-async function demoCall(body: Record<string, unknown>) {
-  const res = await fetch('/admin/api/demo/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-  const out = await res.json();
+/** Calls the admin API; the server checks the session and writes to Supabase. */
+async function api(action: string, body: Record<string, unknown> = {}) {
+  const res = await fetch(`/admin/api/${action}/`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const out = await res.json().catch(() => ({}));
+  if (res.status === 401) {
+    setStatus('Your login has ended. Open the login page in a new tab, log in, then press Ctrl+S here to save.', 'error');
+    window.open('/admin/', '_blank');
+  }
   if (!res.ok || out.error) throw new Error(out.error ?? `Request failed (${res.status})`);
   return out;
 }
@@ -84,11 +83,7 @@ async function save(): Promise<boolean> {
   setStatus('Saving…', 'busy');
   try {
     for (const key of keys) {
-      if (demo) await demoCall({ action: 'save', key, data: data[key] });
-      else {
-        const { error } = await sb!.from('aits_site_content').upsert({ key, status: 'draft', data: data[key], updated_at: new Date().toISOString() });
-        if (error) throw error;
-      }
+      await api('save', { key, data: data[key] });
     }
   } catch (err) {
     keys.forEach((k) => dirty.add(k));
@@ -106,11 +101,7 @@ async function publish() {
   publishBtn.disabled = true;
   setStatus('Publishing…', 'busy');
   try {
-    if (demo) await demoCall({ action: 'publish' });
-    else {
-      const { error } = await sb!.rpc('aits_publish_site');
-      if (error) throw error;
-    }
+    await api('publish');
   } catch (err) {
     setStatus(`Not published: ${(err as Error).message}`, 'error');
     refreshPublishState();
@@ -127,11 +118,7 @@ async function discard() {
   window.clearTimeout(saveTimer);
   dirty.clear();
   try {
-    if (demo) await demoCall({ action: 'discard' });
-    else {
-      const { error } = await sb!.rpc('aits_discard_draft');
-      if (error) throw error;
-    }
+    await api('discard');
   } catch (err) {
     setStatus(`Could not discard: ${(err as Error).message}`, 'error');
     return;
@@ -237,7 +224,7 @@ window.addEventListener('scroll', () => linkBox.classList.remove('is-open'), { p
 async function uploadImage(file: File): Promise<string> {
   if (!file.type.startsWith('image/')) throw new Error('That file is not an image.');
   if (file.size > 8 * 1024 * 1024) throw new Error('Images must be under 8 MB.');
-  const safe = file.name.toLowerCase().replace(/[^a-z0-9.\-]+/g, '-');
+  const meta = { name: file.name, type: file.type, size: file.size };
   if (demo) {
     const base64 = await new Promise<string>((res, rej) => {
       const r = new FileReader();
@@ -245,12 +232,13 @@ async function uploadImage(file: File): Promise<string> {
       r.onerror = () => rej(new Error('Could not read the file.'));
       r.readAsDataURL(file);
     });
-    return (await demoCall({ action: 'upload', name: safe, base64 })).url;
+    return (await api('upload', { ...meta, base64 })).url;
   }
-  const path = `${Date.now()}-${safe}`;
-  const { error } = await sb!.storage.from(BUCKET).upload(path, file, { cacheControl: '31536000', contentType: file.type });
-  if (error) throw error;
-  return sb!.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+  // The server hands out a one-time upload URL; the file goes straight to Supabase Storage.
+  const { signedUrl, publicUrl } = await api('upload', meta);
+  const put = await fetch(signedUrl, { method: 'PUT', headers: { 'Content-Type': file.type, 'cache-control': 'max-age=31536000' }, body: file });
+  if (!put.ok) throw new Error(`Storage rejected the file (${put.status}).`);
+  return publicUrl;
 }
 
 const dialog = h('dialog', 'aits-dialog aits-editor-ui');
@@ -518,9 +506,8 @@ publishBtn.addEventListener('click', publish);
 document.getElementById('aits-discard')!.addEventListener('click', discard);
 document.getElementById('aits-logout')?.addEventListener('click', async () => {
   await save();
-  await sb?.auth.signOut();
-  setAdminCookie(cookie, null);
-  location.href = '/admin/?loggedout';
+  await api('logout').catch(() => {});
+  location.href = '/admin/';
 });
 document.getElementById('aits-page')!.addEventListener('change', async (e) => {
   await save();

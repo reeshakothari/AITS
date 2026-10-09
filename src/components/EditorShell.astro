@@ -2,7 +2,7 @@
 // Toolbar and boot data for the inline editor. Only rendered on /admin/edit/* pages.
 // Linked (not imported) so the editor styles never ship with public pages.
 import editorCss from '../styles/editor.css?url';
-import { ADMIN_COOKIE, demoMode, SUPABASE_ANON_KEY, SUPABASE_URL, type Content } from '../lib/content';
+import { demoMode, type Content } from '../lib/content';
 
 interface Props { content: Content; page: string }
 const { content, page } = Astro.props;
@@ -13,15 +13,13 @@ const pages = [
   ['investors', 'Investors'], ['contact', 'Contact'], ['404', 'Page not found'],
 ];
 const publicHref = page === 'home' ? '/' : page === '404' ? '/404/' : `/${page}/`;
-const boot = {
-  page, demo: demoMode, supabaseUrl: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY, cookie: ADMIN_COOKIE,
-  publicHref, unpublished: meta.unpublished, content,
-};
+const demo = demoMode();
+const boot = { page, demo, publicHref, unpublished: meta.unpublished, content };
 const bootJson = JSON.stringify(boot).replace(/</g, '\\u003c');
 ---
 <link rel="stylesheet" href={editorCss} />
 <div class="aits-toolbar aits-editor-ui" role="toolbar" aria-label="Website editor">
-  <span class="aits-tb-brand">AITS editor</span>
+  <span class="aits-tb-brand">AITS Admin</span>
   <label class="aits-tb-page">
     <span class="aits-sr">Page</span>
     <select id="aits-page">
@@ -37,11 +35,11 @@ const bootJson = JSON.stringify(boot).replace(/</g, '\\u003c');
     <summary class="aits-btn" aria-label="More actions">More</summary>
     <div class="aits-menu">
       <button type="button" id="aits-discard">Discard unpublished changes</button>
-      {!demoMode && <button type="button" id="aits-logout">Log out</button>}
+      {!demo && <button type="button" id="aits-logout">Log out</button>}
     </div>
   </details>
 </div>
-{demoMode && <div class="aits-demo aits-editor-ui">Demo mode: Supabase is not connected yet, so changes are saved on this computer only.</div>}
+{demo && <div class="aits-demo aits-editor-ui">Demo mode: Supabase is not connected yet, so changes are saved on this computer only.</div>}
 <script type="application/json" id="aits-editor-data" set:html={bootJson}></script>
 <script>
   import '../scripts/editor.ts';
