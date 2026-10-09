@@ -7,9 +7,11 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "cms": "npx decap-server"
+    "seed": "node scripts/gen-seed.mjs"
   },
   "dependencies": {
+    "@astrojs/netlify": "^6.6.5",
+    "@supabase/supabase-js": "^2.117.3",
     "astro": "^5.18.2"
   }
 }

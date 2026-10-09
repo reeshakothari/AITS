@@ -1,0 +1,101 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Road from '../components/Road.astro';
+import { editor } from '../lib/edit';
+import type { Content } from '../lib/content';
+
+interface Props { content: Content }
+const { content } = Astro.props;
+const c = content.investors;
+const E = editor(Astro.locals, 'investors');
+---
+<Base content={content} page="investors" image={c.hero.image}>
+  <Hero data={c.hero} path="investors.hero" square />
+
+  <section class="section section--white">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" {...E.t('thesis.eyebrow')}>{c.thesis.eyebrow}</span>
+        <h2 {...E.t('thesis.title')}>{c.thesis.title}</h2>
+      </div>
+      <div class="thesis" {...E.list('thesis.items')}>
+        {c.thesis.items.map((it, i) => (
+          <article class="thesis-item">
+            <span class="thesis-mark" aria-hidden="true"></span>
+            <h3 {...E.t(`thesis.items.${i}.title`)}>{it.title}</h3>
+            <p {...E.t(`thesis.items.${i}.text`)}>{it.text}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--problem" id="model">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" {...E.t('model.eyebrow')}>{c.model.eyebrow}</span>
+        <h2 {...E.t('model.title')}>{c.model.title}</h2>
+        <p class="lead" {...E.t('model.lead')}>{c.model.lead}</p>
+      </div>
+
+      <div class="formula" aria-label="How monthly fleet billing is calculated">
+        <ol {...E.list('model.formula')}>
+          {c.model.formula.map((f, i) => <li><span {...E.t(`model.formula.${i}`)}>{f}</span></li>)}
+        </ol>
+        <span class="formula-eq" aria-hidden="true">=</span>
+        <span class="formula-result" {...E.t('model.formulaResult')}>{c.model.formulaResult}</span>
+      </div>
+
+      <div class="grid grid--4" style="margin-top:clamp(40px,5vw,64px)" {...E.list('model.items')}>
+        {c.model.items.map((it, i) => (
+          <div class="feature"><h3 {...E.t(`model.items.${i}.title`)}>{it.title}</h3><p {...E.t(`model.items.${i}.text`)}>{it.text}</p></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {(c.figures.show || E.on) && (
+    <section class:list={['section section--white', { 'is-hidden-live': !c.figures.show }]}>
+      <div class="wrap">
+        {E.on && !c.figures.show && <p class="hidden-note">Hidden on the live site. Turn on "figures › show" in Settings to publish it.</p>}
+        <div class="section-head"><span class="eyebrow" {...E.t('figures.eyebrow')}>{c.figures.eyebrow}</span></div>
+        <div class="figures" {...E.list('figures.items', { value: '—', label: 'Add a figure' })}>
+          {c.figures.items.map((f, i) => (
+            <div class="figure">
+              <span class="figure-value" {...E.t(`figures.items.${i}.value`)}>{f.value}</span>
+              <span class="figure-label" {...E.t(`figures.items.${i}.label`)}>{f.label}</span>
+            </div>
+          ))}
+        </div>
+        {(c.figures.note || E.on) && <p class="note" style="margin-top:1.25rem" {...E.t('figures.note')}>{c.figures.note}</p>}
+      </div>
+    </section>
+  )}
+
+  <section class="section">
+    <div class="wrap split">
+      <img src={c.india.image} alt={c.india.imageAlt} width="995" height="1491" loading="lazy" {...E.img('india.image', 'india.imageAlt')} />
+      <div>
+        <span class="eyebrow" {...E.t('india.eyebrow')}>{c.india.eyebrow}</span>
+        <h2 {...E.t('india.title')}>{c.india.title}</h2>
+        <ul class="ticks" {...E.list('india.items')}>{c.india.items.map((it, i) => <li {...E.t(`india.items.${i}`)}>{it}</li>)}</ul>
+        <p class="closing" {...E.t('india.closing')}>{c.india.closing}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--white">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" {...E.t('stage.eyebrow')}>{c.stage.eyebrow}</span>
+        <h2 {...E.t('stage.title')}>{c.stage.title}</h2>
+        <p class="lead" {...E.t('stage.text')}>{c.stage.text}</p>
+      </div>
+      <Road steps={c.stage.steps} label={c.stage.title} path="investors.stage.steps" />
+    </div>
+  </section>
+
+  <CtaBand data={c.cta} path="investors.cta" />
+</Base>

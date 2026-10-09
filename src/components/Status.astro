@@ -1,6 +1,10 @@
 ---
-interface Props { label?: string }
-const { label } = Astro.props;
+import { editor } from '../lib/edit';
+interface Props { label?: string; path?: string }
+const { label, path } = Astro.props;
+const E = editor(Astro.locals);
 const current = label ? !/planned|proposed|illustrative|future/i.test(label) : false;
+// In the editor an empty status still renders (faintly) so it can be filled in.
+const show = !!label || (E.on && !!path);
 ---
-{label && <span class:list={['status', { 'status--current': current }]}>{label}</span>}
+{show && <span class:list={['status', { 'status--current': current, 'status--empty': !label }]} {...(path ? E.t(path) : {})}>{label}</span>}

@@ -1,0 +1,9 @@
+---
+import View from '../views/InvestorsView.astro';
+import { loadContent } from '../lib/content';
+
+const content = await loadContent('published');
+// Short CDN cache so a publish from the admin shows up within seconds.
+Astro.response.headers.set('Netlify-CDN-Cache-Control', 'public, durable, s-maxage=10, stale-while-revalidate=60');
+---
+<View content={content} />

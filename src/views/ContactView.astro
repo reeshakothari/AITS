@@ -1,0 +1,146 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import { editor } from '../lib/edit';
+import type { Content } from '../lib/content';
+
+interface Props { content: Content }
+const { content } = Astro.props;
+const c = content.contact;
+const s = content.settings;
+const F = c.form;
+const E = editor(Astro.locals, 'contact');
+
+// All inquiries go to AITS on WhatsApp. Digits only, with country code (e.g. 91XXXXXXXXXX).
+const waNumber = (s.whatsapp || '').replace(/\D/g, '');
+
+const details = [
+  { label: 'WhatsApp', key: 'whatsapp', value: s.whatsapp, href: waNumber ? `https://wa.me/${waNumber}` : '' },
+  { label: 'Phone', key: 'phone', value: s.phone, href: s.phone ? `tel:${s.phone.replace(/\s/g, '')}` : '' },
+  { label: 'Email', key: 'email', value: s.email, href: s.email ? `mailto:${s.email}` : '' },
+  { label: 'Address', key: 'address', value: s.address, href: s.mapUrl },
+  { label: 'Hours', key: 'hours', value: s.hours, href: '' },
+].filter((d) => d.value || E.on);
+const anyDetails = details.some((d) => d.value);
+---
+<Base content={content} page="contact">
+  <Hero data={c.hero} path="contact.hero" />
+
+  <section class="section">
+    <div class="wrap contact-grid">
+      <div>
+        <h2 {...E.t('detailsTitle')}>{c.detailsTitle}</h2>
+        {(anyDetails || E.on) && (
+          <dl class="details">
+            {details.map((d) => (
+              <div>
+                <dt>{d.label}</dt>
+                <dd>{d.href && !E.on ? <a href={d.href} target={d.key === 'whatsapp' ? '_blank' : undefined} rel="noopener">{d.value}</a> : <span {...E.t(`settings.${d.key}`)}>{d.value}</span>}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+        {(!anyDetails || E.on) && <p class="lead" style="margin-top:1rem" {...E.t('detailsMissingText')}>{c.detailsMissingText}</p>}
+        <p style="margin-top:2rem;color:var(--muted)">{s.companyName}</p>
+      </div>
+
+      <form class="form" id="inquiry" data-wa={waNumber} data-header={F.messageHeader} data-name-error={F.nameError} data-company-error={F.companyError} novalidate>
+        <div>
+          <h2 style="font-size:1.5rem" {...E.t('formTitle')}>{c.formTitle}</h2>
+          <p class="form-intro" style="margin-top:.4rem" {...E.t('formIntro')}>{c.formIntro}</p>
+        </div>
+
+        <fieldset class="field">
+          <legend><span {...E.t('form.typeLabel')}>{F.typeLabel}</span> *</legend>
+          <div class="radios" {...E.list('form.types')}>
+            {F.types.map((t, i) => (
+              <label><input type="radio" name="inquiry_type" value={t.value} id={`type-${t.value.toLowerCase()}`} checked={i === 0} /> <span {...E.t(`form.types.${i}.label`)}>{t.label}</span></label>
+            ))}
+          </div>
+        </fieldset>
+
+        <div class="row">
+          <div class="field"><label for="f-name"><span {...E.t('form.nameLabel')}>{F.nameLabel}</span> *</label><input id="f-name" name="name" autocomplete="name" required /></div>
+          <div class="field"><label for="f-company"><span {...E.t('form.companyLabel')}>{F.companyLabel}</span> <span class="fleet-req" hidden>*</span></label><input id="f-company" name="company" autocomplete="organization" /></div>
+        </div>
+        <div class="row fleet-only" data-fleet>
+          <div class="field"><label for="f-region" {...E.t('form.regionLabel')}>{F.regionLabel}</label><input id="f-region" name="region" /></div>
+          <div class="field">
+            <label for="f-size" {...E.t('form.fleetSizeLabel')}>{F.fleetSizeLabel}</label>
+            <select id="f-size" name="fleet_size">
+              <option value="">{F.selectPlaceholder}</option>
+              {F.fleetSizes.map((o) => <option>{o}</option>)}
+            </select>
+          </div>
+        </div>
+        <div class="field"><label for="f-message" {...E.t('form.messageLabel')}>{F.messageLabel}</label><textarea id="f-message" name="message"></textarea></div>
+
+        <p class="form-error" role="alert" hidden></p>
+        {waNumber ? (
+          <button class="btn btn--wa" type="submit">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
+            <span {...E.t('whatsappButtonText')}>{c.whatsappButtonText}</span>
+          </button>
+        ) : (
+          <div class="wa-missing">
+            <button class="btn btn--wa" type="button" disabled><span {...E.t('whatsappButtonText')}>{c.whatsappButtonText}</span></button>
+            <p class="form-intro" {...E.t('whatsappMissingText')}>{c.whatsappMissingText}</p>
+          </div>
+        )}
+      </form>
+    </div>
+  </section>
+
+  <script>
+    const form = document.getElementById('inquiry') as HTMLFormElement | null;
+    const fleetRow = document.querySelector<HTMLElement>('[data-fleet]');
+    const company = document.getElementById('f-company') as HTMLInputElement | null;
+    const req = document.querySelector<HTMLElement>('.fleet-req');
+    const error = document.querySelector<HTMLElement>('.form-error');
+    const radios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="inquiry_type"]'));
+    const current = () => radios.find((r) => r.checked)?.value ?? '';
+
+    function sync() {
+      const isFleet = current() === 'Fleet';
+      if (fleetRow) fleetRow.hidden = !isFleet;
+      if (company) company.required = isFleet;
+      if (req) req.hidden = !isFleet;
+    }
+    const wanted = new URLSearchParams(location.search).get('type');
+    const match = radios.find((r) => r.value.toLowerCase() === wanted?.toLowerCase());
+    if (match) match.checked = true;
+    radios.forEach((r) => r.addEventListener('change', sync));
+    sync();
+
+    form?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (document.documentElement.classList.contains('is-editing')) return;
+      const number = form.dataset.wa;
+      if (!number) return;
+      const data = new FormData(form);
+      const get = (k: string) => String(data.get(k) ?? '').trim();
+      const type = get('inquiry_type');
+      const isFleet = type === 'Fleet';
+
+      const problems: string[] = [];
+      if (!get('name')) problems.push(form.dataset.nameError ?? '');
+      if (isFleet && !get('company')) problems.push(form.dataset.companyError ?? '');
+      if (problems.length) {
+        if (error) { error.textContent = problems.join(' '); error.hidden = false; }
+        return;
+      }
+      if (error) error.hidden = true;
+
+      const lines = [
+        `${form.dataset.header} (${type})`,
+        `Name: ${get('name')}`,
+        get('company') && `Company: ${get('company')}`,
+        isFleet && get('region') && `City or region: ${get('region')}`,
+        isFleet && get('fleet_size') && `Fleet size: ${get('fleet_size')}`,
+        get('message') && `Message: ${get('message')}`,
+      ].filter(Boolean);
+
+      window.open(`https://wa.me/${number}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
+    });
+  </script>
+</Base>

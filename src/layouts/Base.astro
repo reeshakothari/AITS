@@ -1,38 +1,41 @@
 ---
 import '../styles/global.css';
 import '../styles/motion.css';
-import settings from '../content/settings.json';
+import EditorShell from '../components/EditorShell.astro';
+import { editor } from '../lib/edit';
+import type { Content, ContentKey } from '../lib/content';
 
 interface Props {
-  title: string;
-  description: string;
+  content: Content;
+  /** Content key of the page being rendered; its seo object provides title and description */
+  page: ContentKey | '404';
   image?: string;
   noindex?: boolean;
 }
 
-const { title, description, image = '/images/truck-highway.jpg', noindex = false } = Astro.props;
-const path = Astro.url.pathname;
-const canonical = new URL(path, Astro.site).href;
-const ogImage = new URL(image, Astro.site).href;
+const { content, page, image = '/images/truck-highway.jpg', noindex = false } = Astro.props;
+const { global: g, settings } = content;
+const E = editor(Astro.locals);
+const seo = page !== '404' && 'seo' in content[page] ? (content[page] as { seo: { title: string; description: string } }).seo : null;
+const title = seo?.title ?? `${g.notFound.title} | AITS`;
+const description = seo?.description ?? g.notFound.text;
 
-const nav = [
-  { href: '/', label: 'Home' },
-  { href: '/wash/', label: 'AITS Wash' },
-  { href: '/fleet/', label: 'Fleet Program' },
-  { href: '/vision/', label: 'AITS Vision' },
-];
-const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+const pageHref = page === 'home' ? '/' : `/${page}/`;
+const canonical = new URL(pageHref, Astro.site).href;
+const ogImage = new URL(image, Astro.site).href;
+const isCurrent = (href: string) => href === pageHref;
 const year = new Date().getFullYear();
+const wa = (settings.whatsapp || '').replace(/\D/g, '');
 ---
 <!doctype html>
-<html lang="en-IN">
+<html lang="en-IN" class:list={{ 'is-editing': E.on }}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex" />}
+    {(noindex || E.on) && <meta name="robots" content="noindex" />}
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="AITS · All India Truckshed" />
     <meta property="og:title" content={title} />
@@ -51,27 +54,36 @@ const year = new Date().getFullYear();
       name: settings.companyName,
       alternateName: 'AITS',
       url: 'https://aits.services/',
-      logo: 'https://aits.services/images/logo.png',
+      logo: new URL(g.logo, Astro.site).href,
       ...(settings.email ? { email: settings.email } : {}),
       ...(settings.phone ? { telephone: settings.phone } : {}),
     })} />
   </head>
   <body>
-    <a class="skip" href="#main">Skip to content</a>
-    {settings.previewBanner && <div class="preview-bar" role="note">{settings.previewBannerText}</div>}
+    {E.on && <EditorShell content={content} page={page} />}
+    <a class="skip" href="#main" {...E.t('global.skipLink')}>{g.skipLink}</a>
+    {(settings.previewBanner || E.on) && (
+      <div class:list={['preview-bar', { 'preview-bar--off': !settings.previewBanner }]} role="note" {...E.t('settings.previewBannerText')}>{settings.previewBannerText}</div>
+    )}
     <header class="site-header">
       <div class="wrap">
         <a class="brand" href="/" aria-label="AITS home">
-          <img src="/images/logo.png" alt="AITS · All India Truckshed" width="520" height="122" />
+          <img src={g.logo} alt={g.logoAlt} width="520" height="122" {...E.img('global.logo', 'global.logoAlt')} />
         </a>
         <button class="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false" aria-label="Menu">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         </button>
         <nav class="nav" id="site-nav" data-open="false" aria-label="Main">
-          {nav.map((item) => (
-            <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a>
-          ))}
-          <a class="btn btn--primary" href="/contact/" aria-current={isCurrent('/contact/') ? 'page' : undefined}>Contact</a>
+          <span class="nav-links" {...E.list('global.nav')}>
+            {g.nav.map((item, i) => (
+              <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined} {...E.href(`global.nav.${i}.href`)}>
+                <span {...E.t(`global.nav.${i}.label`)}>{item.label}</span>
+              </a>
+            ))}
+          </span>
+          <a class="btn btn--primary" href={g.navButton.href} aria-current={isCurrent(g.navButton.href) ? 'page' : undefined} {...E.href('global.navButton.href')}>
+            <span {...E.t('global.navButton.label')}>{g.navButton.label}</span>
+          </a>
         </nav>
       </div>
     </header>
@@ -83,30 +95,30 @@ const year = new Date().getFullYear();
     <footer class="site-footer">
       <div class="wrap">
         <div>
-          <img src="/images/logo-white.png" alt="AITS · All India Truckshed" width="520" height="122" loading="lazy" />
-          <p class="footer-line">{settings.brandLine}</p>
+          <img src={g.logoWhite} alt={g.logoAlt} width="520" height="122" loading="lazy" {...E.img('global.logoWhite')} />
+          <p class="footer-line" {...E.t('settings.brandLine')}>{settings.brandLine}</p>
         </div>
         <div>
-          <h2>Pages</h2>
+          <h2 {...E.t('global.footerPagesTitle')}>{g.footerPagesTitle}</h2>
           <ul>
-            {nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
-            <li><a href="/contact/">Contact</a></li>
+            {g.nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+            <li><a href={g.navButton.href}>{g.navButton.label}</a></li>
           </ul>
         </div>
         <div>
-          <h2>Contact</h2>
+          <h2 {...E.t('global.footerContactTitle')}>{g.footerContactTitle}</h2>
           <ul>
-            {settings.whatsapp && <li><a href={`https://wa.me/${settings.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener">WhatsApp: {settings.whatsapp}</a></li>}
+            {wa && <li><a href={`https://wa.me/${wa}`} target="_blank" rel="noopener">WhatsApp: {settings.whatsapp}</a></li>}
             {settings.email && <li><a href={`mailto:${settings.email}`}>{settings.email}</a></li>}
             {settings.phone && <li><a href={`tel:${settings.phone.replace(/\s/g, '')}`}>{settings.phone}</a></li>}
             {settings.address && <li>{settings.address}</li>}
-            <li><a href="/contact/#inquiry">Send an inquiry</a></li>
+            <li><a href="/contact/#inquiry" {...E.t('global.footerInquiryLink')}>{g.footerInquiryLink}</a></li>
           </ul>
         </div>
       </div>
       <div class="footer-legal">
         <div class="wrap">
-          <span>© {year} {settings.companyName}</span>
+          <span>© {year} <span {...E.t('settings.companyName')}>{settings.companyName}</span></span>
           <span>aits.services</span>
         </div>
       </div>

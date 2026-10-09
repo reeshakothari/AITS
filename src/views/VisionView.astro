@@ -1,0 +1,55 @@
+---
+import Base from '../layouts/Base.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Hero from '../components/Hero.astro';
+import Notice from '../components/Notice.astro';
+import Status from '../components/Status.astro';
+import { editor } from '../lib/edit';
+import type { Content } from '../lib/content';
+
+interface Props { content: Content }
+const { content } = Astro.props;
+const c = content.vision;
+const E = editor(Astro.locals, 'vision');
+---
+<Base content={content} page="vision" image={c.hero.image}>
+  <Hero data={c.hero} path="vision.hero" background />
+  <Notice text={c.notice} path="vision.notice" label={content.global.plannedLabel} />
+
+  <section class="section section--white">
+    <div class="wrap">
+      <div class="section-head"><h2 {...E.t('stagesTitle')}>{c.stagesTitle}</h2></div>
+      <div class="steps">
+        <ol class="steps-list" aria-label={c.stagesTitle} {...E.list('stages', { name: 'NEW STEP', text: 'Describe this step', status: 'Planned' })}>
+          {c.stages.map((s, i) => (
+            <li class:list={['stage', { 'stage--current': i === 0 }]}>
+              <span class="num"><span {...(i === 0 ? E.t('stepLabel') : {})}>{c.stepLabel}</span> {i + 1}</span>
+              <h3 {...E.t(`stages.${i}.name`)}>{s.name}</h3>
+              <p {...E.t(`stages.${i}.text`)}>{s.text}</p>
+              <Status label={s.status} path={`vision.stages.${i}.status`} />
+            </li>
+          ))}
+        </ol>
+        {(c.nextTitle || E.on) && (
+          <div class="stage stage--next">
+            <span class="num" {...E.t('nextLabel')}>{c.nextLabel}</span>
+            <h3 {...E.t('nextTitle')}>{c.nextTitle}</h3>
+            {(c.nextText || E.on) && <p {...E.t('nextText')}>{c.nextText}</p>}
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+
+  {(c.rollout.length > 0 || E.on) && (
+    <section class="section section--navy">
+      <div class="wrap">
+        <div class="section-head"><h2 {...E.t('rolloutTitle')}>{c.rolloutTitle}</h2></div>
+        <ol class="rollout" aria-label={c.rolloutTitle} {...E.list('rollout', 'New place')}>{(c.rollout as string[]).map((r, i) => <li {...E.t(`rollout.${i}`)}>{r}</li>)}</ol>
+        {E.on && c.rollout.length === 0 && <p class="note">Hidden on the live site until it has at least one item. Hover the empty area above and press + to add one.</p>}
+      </div>
+    </section>
+  )}
+
+  <CtaBand data={c.cta} path="vision.cta" />
+</Base>

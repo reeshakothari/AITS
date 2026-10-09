@@ -15,7 +15,17 @@
     ],
     "image": "/images/truck-highway.jpg",
     "imageAlt": "A loaded Indian goods truck driving on an open highway",
-    "status": "In planning"
+    "status": "In planning",
+    "buttons": [
+      {
+        "text": "Explore AITS Wash",
+        "href": "/wash/"
+      },
+      {
+        "text": "Investor information",
+        "href": "/investors/"
+      }
+    ]
   },
   "about": {
     "title": "Building the future of commercial trucking.",
@@ -28,7 +38,8 @@
       "Network",
       "Reliability",
       "Scale"
-    ]
+    ],
+    "eyebrow": "About AITS"
   },
   "problem": {
     "eyebrow": "The problem",
@@ -89,12 +100,40 @@
         "text": "From Truck Wash to Truck Infrastructure Network.",
         "link": "/vision/",
         "linkText": "Read the vision"
+      },
+      {
+        "title": "For investors",
+        "text": "Recurring fleet contracts, a repeatable model and a long runway.",
+        "link": "/investors/",
+        "linkText": "See the investor case"
       }
     ]
   },
   "cta": {
     "title": "Talk to AITS",
     "text": "Ask a question about AITS Wash or start a fleet inquiry.",
-    "buttonText": "Contact us"
+    "buttonText": "Contact us",
+    "buttonHref": "/contact/"
+  },
+  "investors": {
+    "eyebrow": "For investors",
+    "title": "An early opportunity in India's truck infrastructure.",
+    "text": "AITS is building a professional, recurring-revenue wash network for India's commercial fleets, starting with AITS Wash.",
+    "points": [
+      {
+        "title": "Recurring B2B revenue",
+        "text": "Monthly fleet contracts with a minimum commitment and a fixed price per wash."
+      },
+      {
+        "title": "A repeatable model",
+        "text": "A standardized, technology-enabled process designed to be built site after site."
+      },
+      {
+        "title": "A platform for more",
+        "text": "Each site is designed as a base for future truck services, added step by step."
+      }
+    ],
+    "buttonText": "See the investor case",
+    "buttonHref": "/investors/"
   }
 }

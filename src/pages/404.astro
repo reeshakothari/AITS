@@ -1,13 +1,9 @@
 ---
-import Base from '../layouts/Base.astro';
+import View from '../views/NotFoundView.astro';
+import { loadContent } from '../lib/content';
+
+const content = await loadContent('published');
+// Short CDN cache so a publish from the admin shows up within seconds.
+Astro.response.headers.set('Netlify-CDN-Cache-Control', 'public, durable, s-maxage=10, stale-while-revalidate=60');
 ---
-<Base title="Page not found | AITS" description="This page could not be found." noindex>
-  <section class="section">
-    <div class="wrap" style="max-width:44rem">
-      <span class="eyebrow">404</span>
-      <h1>Page not found</h1>
-      <p class="lead" style="margin-top:1rem">The page you are looking for does not exist or has moved.</p>
-      <div class="hero-actions"><a class="btn btn--outline" href="/">Back to home</a></div>
-    </div>
-  </section>
-</Base>
+<View content={content} />

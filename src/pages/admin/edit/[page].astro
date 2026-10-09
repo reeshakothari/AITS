@@ -1,0 +1,32 @@
+---
+// The editor: renders the real page from the draft content with inline editing switched on.
+import HomeView from '../../../views/HomeView.astro';
+import WashView from '../../../views/WashView.astro';
+import FleetView from '../../../views/FleetView.astro';
+import VisionView from '../../../views/VisionView.astro';
+import InvestorsView from '../../../views/InvestorsView.astro';
+import ContactView from '../../../views/ContactView.astro';
+import NotFoundView from '../../../views/NotFoundView.astro';
+import { ADMIN_COOKIE, demoMode, loadContent, verifyAdmin } from '../../../lib/content';
+
+const views = {
+  home: HomeView, wash: WashView, fleet: FleetView, vision: VisionView,
+  investors: InvestorsView, contact: ContactView, '404': NotFoundView,
+} as const;
+
+const page = Astro.params.page as keyof typeof views;
+if (!(page in views)) return Astro.redirect('/admin/edit/home/');
+
+const token = Astro.cookies.get(ADMIN_COOKIE)?.value;
+if (!demoMode && !(await verifyAdmin(token))) {
+  return Astro.redirect(`/admin/?next=${encodeURIComponent(`/admin/edit/${page}/`)}`);
+}
+
+const [content, published] = await Promise.all([loadContent('draft', token), loadContent('published', token)]);
+Astro.locals.editing = true;
+Astro.locals.editorMeta = { page, unpublished: JSON.stringify(content) !== JSON.stringify(published) };
+Astro.response.headers.set('Cache-Control', 'no-store');
+
+const View = views[page];
+---
+<View content={content} />

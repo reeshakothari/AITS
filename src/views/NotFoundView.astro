@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+import { editor } from '../lib/edit';
+import type { Content } from '../lib/content';
+
+interface Props { content: Content }
+const { content } = Astro.props;
+const n = content.global.notFound;
+const E = editor(Astro.locals, 'global.notFound');
+---
+<Base content={content} page="404" noindex>
+  <section class="section">
+    <div class="wrap" style="max-width:44rem">
+      <span class="eyebrow" {...E.t('eyebrow')}>{n.eyebrow}</span>
+      <h1 {...E.t('title')}>{n.title}</h1>
+      <p class="lead" style="margin-top:1rem" {...E.t('text')}>{n.text}</p>
+      <div class="hero-actions"><a class="btn btn--outline" href="/"><span {...E.t('button')}>{n.button}</span></a></div>
+    </div>
+  </section>
+</Base>

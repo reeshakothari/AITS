@@ -1,0 +1,138 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { editor } from '../lib/edit';
+import type { Content } from '../lib/content';
+
+interface Props { content: Content }
+const { content } = Astro.props;
+const c = content.home;
+const E = editor(Astro.locals, 'home');
+
+const lanes = [
+  { key: 'a', labelPath: 'compare.manualLabel', stepsPath: 'compare.manualSteps', label: c.compare.manualLabel, steps: c.compare.manualSteps, trucks: 1 },
+  { key: 'b', labelPath: 'compare.aitsLabel', stepsPath: 'compare.aitsSteps', label: c.compare.aitsLabel, steps: c.compare.aitsSteps, trucks: 2 },
+];
+---
+<Base content={content} page="home" image={c.hero.image}>
+  <Hero data={c.hero} path="home.hero">
+    <p class="motto" {...E.t('hero.motto')}>{c.hero.motto}</p>
+    <ul class="tags" {...E.list('hero.tags')}>{c.hero.tags.map((t, i) => <li {...E.t(`hero.tags.${i}`)}>{t}</li>)}</ul>
+  </Hero>
+
+  <div class="marquee" aria-label={c.about.keywords.join(', ')}>
+    <div class="marquee-track">
+      {[0, 1].map((n) => (
+        <ul aria-hidden={n === 1 ? 'true' : undefined} {...(n === 0 ? E.list('about.keywords') : {})}>
+          {c.about.keywords.map((k, i) => (
+            <li><span {...(n === 0 ? E.t(`about.keywords.${i}`) : {})}>{k}</span><img src="/images/symbol.png" alt="" width="139" height="97" style="filter:brightness(0) invert(1)" /></li>
+          ))}
+        </ul>
+      ))}
+    </div>
+  </div>
+
+  <section class="section section--white">
+    <div class="wrap split" style="align-items:start">
+      <div class="section-head" style="margin-bottom:0">
+        <span class="eyebrow" {...E.t('about.eyebrow')}>{c.about.eyebrow}</span>
+        <h2 {...E.t('about.title')}>{c.about.title}</h2>
+      </div>
+      <div>
+        <p class="lead" style="color:var(--charcoal)" {...E.t('about.body')}>{c.about.body}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--problem">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" {...E.t('problem.eyebrow')}>{c.problem.eyebrow}</span>
+        <h2 {...E.t('problem.title')}>{c.problem.title}</h2>
+      </div>
+      <div class="grid grid--4" {...E.list('problem.items')}>
+        {c.problem.items.map((it, i) => (
+          <div class="feature"><h3 {...E.t(`problem.items.${i}.title`)}>{it.title}</h3><p {...E.t(`problem.items.${i}.text`)}>{it.text}</p></div>
+        ))}
+      </div>
+
+      <div class="lanes" aria-label="Manual washing compared with AITS Wash">
+        {lanes.map((lane) => {
+          const [tag, ...rest] = lane.label.split(':');
+          const name = rest.join(':').trim();
+          return (
+            <div class={`lane lane--${lane.key}`}>
+              <div class="lane-head">
+                {E.on ? (
+                  <h3 {...E.t(lane.labelPath)}>{lane.label}</h3>
+                ) : (
+                  <>
+                    <span class="lane-tag">{name ? tag.trim() : ''}</span>
+                    <h3>{name || tag}</h3>
+                  </>
+                )}
+              </div>
+              <div class="lane-road">
+                <ol {...E.list(lane.stepsPath)}>{lane.steps.map((s, i) => <li {...E.t(`${lane.stepsPath}.${i}`)}>{s}</li>)}</ol>
+                <div class="lane-track" aria-hidden="true">
+                  {Array.from({ length: lane.trucks }).map((_, t) => (
+                    <span class={`lane-truck lane-truck--${t + 1}`}>
+                      <svg width="46" height="26" viewBox="0 0 46 26">
+                        <rect x="1" y="2" width="27" height="15" rx="1.5" class="tb" />
+                        <path d="M29 6h8.5l5.5 5.5V17H29z" class="tc" />
+                        <path d="M32 8.5h5l3 3h-8z" class="tw" />
+                        <circle cx="9" cy="19.5" r="3.6" class="tr" />
+                        <circle cx="21" cy="19.5" r="3.6" class="tr" />
+                        <circle cx="37" cy="19.5" r="3.6" class="tr" />
+                      </svg>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--white">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" {...E.t('topics.eyebrow')}>{c.topics.eyebrow}</span>
+        <h2 {...E.t('topics.title')}>{c.topics.title}</h2>
+      </div>
+      <div class="grid grid--4" {...E.list('topics.cards')}>
+        {c.topics.cards.map((card, i) => (
+          <a class="topic" href={card.link} {...E.href(`topics.cards.${i}.link`)}>
+            <h3 {...E.t(`topics.cards.${i}.title`)}>{card.title}</h3>
+            <p {...E.t(`topics.cards.${i}.text`)}>{card.text}</p>
+            <span class="more" {...E.t(`topics.cards.${i}.linkText`)}>{card.linkText}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--investor">
+    <div class="wrap invest-teaser">
+      <div class="section-head" style="margin-bottom:0">
+        <span class="eyebrow" {...E.t('investors.eyebrow')}>{c.investors.eyebrow}</span>
+        <h2 {...E.t('investors.title')}>{c.investors.title}</h2>
+        <p class="lead" {...E.t('investors.text')}>{c.investors.text}</p>
+        <div><a class="btn btn--primary" href={c.investors.buttonHref} {...E.href('investors.buttonHref')}><span {...E.t('investors.buttonText')}>{c.investors.buttonText}</span></a></div>
+      </div>
+      <ol class="invest-points" {...E.list('investors.points')}>
+        {c.investors.points.map((p, i) => (
+          <li>
+            <h3 {...E.t(`investors.points.${i}.title`)}>{p.title}</h3>
+            <p {...E.t(`investors.points.${i}.text`)}>{p.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <CtaBand data={c.cta} path="home.cta" />
+</Base>

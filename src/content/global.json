@@ -1,0 +1,42 @@
+{
+  "logo": "/images/logo.png",
+  "logoAlt": "AITS · All India Truckshed",
+  "logoWhite": "/images/logo-white.png",
+  "nav": [
+    {
+      "label": "Home",
+      "href": "/"
+    },
+    {
+      "label": "AITS Wash",
+      "href": "/wash/"
+    },
+    {
+      "label": "Fleet Program",
+      "href": "/fleet/"
+    },
+    {
+      "label": "AITS Vision",
+      "href": "/vision/"
+    },
+    {
+      "label": "Investors",
+      "href": "/investors/"
+    }
+  ],
+  "navButton": {
+    "label": "Contact",
+    "href": "/contact/"
+  },
+  "skipLink": "Skip to content",
+  "footerPagesTitle": "Pages",
+  "footerContactTitle": "Contact",
+  "footerInquiryLink": "Send an inquiry",
+  "plannedLabel": "Planned",
+  "notFound": {
+    "eyebrow": "404",
+    "title": "Page not found",
+    "text": "The page you are looking for does not exist or has moved.",
+    "button": "Back to home"
+  }
+}

@@ -21,10 +21,13 @@
   "rolloutTitle": "Expansion path",
   "rollout": [],
   "cta": {
-    "title": "Partner with AITS",
-    "text": "Interested in AITS Wash or what AITS is planning? Get in touch.",
-    "buttonText": "Contact us"
+    "title": "Invest in AITS",
+    "text": "Interested in AITS Wash or what AITS is planning? Talk to the team.",
+    "buttonText": "Investor information",
+    "buttonHref": "/investors/"
   },
   "nextTitle": "More to come",
-  "nextText": "Further steps will be announced as AITS grows."
+  "nextText": "Further steps will be announced as AITS grows.",
+  "stepLabel": "Step",
+  "nextLabel": "Next"
 }

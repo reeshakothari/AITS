@@ -9,7 +9,17 @@
     "lead": "Wash. Record. Maintain. Move.",
     "image": "/images/wash-facility-concept.jpg",
     "imageAlt": "Concept illustration of a planned AITS Wash facility with a wash bay and water treatment plant",
-    "imageCaption": "Concept illustration"
+    "imageCaption": "Concept illustration",
+    "buttons": [
+      {
+        "text": "How it works",
+        "href": "#how-it-works"
+      },
+      {
+        "text": "Fleet Program",
+        "href": "/fleet/"
+      }
+    ]
   },
   "pillars": [
     {
@@ -146,7 +156,8 @@
   "cta": {
     "title": "Running a fleet?",
     "text": "AITS Wash is built for recurring fleet contracts with one consolidated monthly invoice.",
-    "buttonText": "See the Fleet Program"
+    "buttonText": "See the Fleet Program",
+    "buttonHref": "/fleet/"
   },
   "notice": "AITS Wash is currently being planned. The services, systems and facilities described on this page are planned and not yet available."
 }

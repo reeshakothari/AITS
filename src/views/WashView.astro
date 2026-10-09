@@ -1,0 +1,95 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Road from '../components/Road.astro';
+import Notice from '../components/Notice.astro';
+import Status from '../components/Status.astro';
+import { editor } from '../lib/edit';
+import type { Content } from '../lib/content';
+
+interface Props { content: Content }
+const { content } = Astro.props;
+const c = content.wash;
+const E = editor(Astro.locals, 'wash');
+---
+<Base content={content} page="wash" image={c.hero.image}>
+  <Hero data={c.hero} path="wash.hero" square />
+  <Notice text={c.notice} path="wash.notice" label={content.global.plannedLabel} />
+
+  <section class="section section--white">
+    <div class="wrap">
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,11.5rem),1fr))" {...E.list('pillars')}>
+        {c.pillars.map((p, i) => (
+          <div class="feature">
+            <Status label={p.status} path={`wash.pillars.${i}.status`} />
+            <h3 {...E.t(`pillars.${i}.title`)}>{p.title}</h3>
+            <p {...E.t(`pillars.${i}.text`)}>{p.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--navy" id="how-it-works">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" {...E.t('system.eyebrow')}>{c.system.eyebrow}</span>
+        <h2 {...E.t('system.title')}>{c.system.title}</h2>
+      </div>
+      <ol class="system" aria-label="How the automated washing system works" {...E.list('system.steps')}>
+        {c.system.steps.map((s, i) => <li><h3 {...E.t(`system.steps.${i}.title`)}>{s.title}</h3><p {...E.t(`system.steps.${i}.text`)}>{s.text}</p></li>)}
+      </ol>
+      <div class="sequence">
+        <h3 {...E.t('system.sequenceTitle')}>{c.system.sequenceTitle}</h3>
+        <ol {...E.list('system.sequence')}>{c.system.sequence.map((s, i) => <li {...E.t(`system.sequence.${i}`)}>{s}</li>)}</ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap split">
+      <img src={c.diversity.image} alt={c.diversity.imageAlt} width="995" height="1491" loading="lazy" {...E.img('diversity.image', 'diversity.imageAlt')} />
+      <div>
+        <h2 {...E.t('diversity.title')}>{c.diversity.title}</h2>
+        <ul class="ticks" {...E.list('diversity.items')}>{c.diversity.items.map((it, i) => <li {...E.t(`diversity.items.${i}`)}>{it}</li>)}</ul>
+        <p class="closing" {...E.t('diversity.closing')}>{c.diversity.closing}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--white">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" {...E.t('water.eyebrow')}>{c.water.eyebrow}</span>
+        <h2 {...E.t('water.title')}>{c.water.title}</h2>
+      </div>
+      <div class="grid grid--4" {...E.list('water.items')}>
+        {c.water.items.map((it, i) => (
+          <div class="feature">
+            <Status label={it.status} path={`wash.water.items.${i}.status`} />
+            <h3 {...E.t(`water.items.${i}.title`)}>{it.title}</h3>
+            <p {...E.t(`water.items.${i}.text`)}>{it.text}</p>
+          </div>
+        ))}
+      </div>
+      {(c.water.note || E.on) && <p class="note" style="margin-top:2rem" {...E.t('water.note')}>{c.water.note}</p>}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" {...E.t('driver.eyebrow')}>{c.driver.eyebrow}</span>
+        <h2 {...E.t('driver.title')}>{c.driver.title}</h2>
+      </div>
+      <Road steps={c.driver.journey} label="Driver journey at AITS" path="wash.driver.journey" />
+      <div style="margin-top:clamp(40px,5vw,56px)">
+        <h3 style="margin-bottom:1rem" {...E.t('driver.facilitiesTitle')}>{c.driver.facilitiesTitle}</h3>
+        <ul class="chips" {...E.list('driver.facilities')}>{c.driver.facilities.map((f, i) => <li {...E.t(`driver.facilities.${i}`)}>{f}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand data={c.cta} path="wash.cta" />
+</Base>

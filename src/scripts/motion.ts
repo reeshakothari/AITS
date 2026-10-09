@@ -5,10 +5,10 @@
 const REVEAL = [
   '.section-head', '.feature', '.card', '.topic', '.road-wrap', '.system li', '.sequence',
   '.split > *', '.stage', '.rollout', '.chips', '.lane', '.tier', '.cta-band .wrap > *',
-  '.form', '.details', '.vision-notice', '.contact-grid > div > h2', '.contact-grid > div > p',
+  '.form', '.details', '.vision-notice', '.thesis-item', '.formula', '.figure', '.invest-points li', '.contact-grid > div > h2', '.contact-grid > div > p',
 ].join(',');
 
-const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('is-editing');
 const els = Array.from(document.querySelectorAll<HTMLElement>(REVEAL));
 
 if (reduce || !('IntersectionObserver' in window)) {

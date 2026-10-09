@@ -1,0 +1,133 @@
+{
+  "seo": {
+    "title": "Invest in AITS | All India Truckshed",
+    "description": "AITS is building professional, technology-enabled truck washing infrastructure for India's commercial fleets, sold on recurring B2B fleet contracts."
+  },
+  "hero": {
+    "eyebrow": "For investors",
+    "status": "In planning",
+    "title": "Building the infrastructure layer for India's commercial trucking",
+    "lead": "AITS starts with AITS Wash: professional, technology-enabled truck washing, sold to fleets on recurring monthly contracts.",
+    "image": "/images/wash-facility-concept.jpg",
+    "imageAlt": "Concept illustration of a planned AITS Wash facility",
+    "imageCaption": "Concept illustration",
+    "buttons": [
+      {
+        "text": "Request the investor deck",
+        "href": "/contact/?type=investor#inquiry"
+      },
+      {
+        "text": "See the business model",
+        "href": "#model"
+      }
+    ]
+  },
+  "thesis": {
+    "eyebrow": "Why AITS",
+    "title": "A clear gap, a repeatable model and a long runway.",
+    "items": [
+      {
+        "title": "An informal market",
+        "text": "Truck washing is still largely informal, manual and untracked. Fleets have no wash history, no fleet-level visibility and no centralized billing."
+      },
+      {
+        "title": "A professional product",
+        "text": "A defined, repeatable wash process built for the diversity of Indian commercial trucks, with every wash recorded digitally."
+      },
+      {
+        "title": "Recurring B2B revenue",
+        "text": "Fleets sign monthly contracts with a minimum wash commitment and a fixed price per wash, billed on one consolidated invoice."
+      },
+      {
+        "title": "A platform for more",
+        "text": "Each AITS site is designed as a base for future truck services, built step by step."
+      }
+    ]
+  },
+  "model": {
+    "eyebrow": "Business model",
+    "title": "Revenue grows with every truck and every wash.",
+    "lead": "AITS becomes more powerful as fleet utilization increases.",
+    "formula": [
+      "Trucks",
+      "Wash frequency",
+      "Price per wash"
+    ],
+    "formulaResult": "Monthly fleet billing",
+    "items": [
+      {
+        "title": "Fleet contracts",
+        "text": "Minimum monthly wash commitment of 30 trucks · Fixed price per truck per wash"
+      },
+      {
+        "title": "Consolidated billing",
+        "text": "One invoice per fleet per month · No per-driver payment friction"
+      },
+      {
+        "title": "Digital records",
+        "text": "Every wash captures vehicle ID, date, time, location, wash type and amount"
+      },
+      {
+        "title": "Water recycling",
+        "text": "Treatment and reuse built into the infrastructure to reduce freshwater demand"
+      }
+    ]
+  },
+  "figures": {
+    "show": false,
+    "eyebrow": "Key figures",
+    "items": [
+      {
+        "value": "—",
+        "label": "Add a figure"
+      },
+      {
+        "value": "—",
+        "label": "Add a figure"
+      },
+      {
+        "value": "—",
+        "label": "Add a figure"
+      }
+    ],
+    "note": "Figures are illustrative and subject to validation."
+  },
+  "india": {
+    "eyebrow": "Built for India",
+    "title": "Designed for the diversity of Indian commercial trucks.",
+    "items": [
+      "Wooden sideboards & tarpaulins",
+      "Spare tyres & custom bumpers",
+      "Irregular body structures",
+      "Varying cabin heights"
+    ],
+    "closing": "Not a one-size-fits-all system",
+    "image": "/images/truck-front.jpg",
+    "imageAlt": "Front of a hand-painted Indian goods truck with a decorated cabin"
+  },
+  "stage": {
+    "eyebrow": "Where AITS is today",
+    "title": "AITS is in the planning stage.",
+    "text": "The first step is AITS Wash. Early investors can help shape the first site and the network that follows.",
+    "steps": [
+      {
+        "title": "Plan",
+        "text": "Design the site, wash system and water infrastructure"
+      },
+      {
+        "title": "Build",
+        "text": "Open the first AITS Wash site"
+      },
+      {
+        "title": "Grow",
+        "text": "Sign fleet contracts and add further sites"
+      }
+    ]
+  },
+  "cta": {
+    "title": "Talk to the AITS team",
+    "text": "Request the investor deck or set up a conversation.",
+    "buttonText": "Request the investor deck",
+    "buttonHref": "/contact/?type=investor#inquiry"
+  }
+}

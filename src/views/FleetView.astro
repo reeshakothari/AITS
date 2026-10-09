@@ -1,0 +1,84 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Road from '../components/Road.astro';
+import Notice from '../components/Notice.astro';
+import { editor } from '../lib/edit';
+import type { Content } from '../lib/content';
+
+interface Props { content: Content }
+const { content } = Astro.props;
+const c = content.fleet;
+const E = editor(Astro.locals, 'fleet');
+const inquiry = c.hero.buttons[0]?.href || '/contact/?type=fleet#inquiry';
+---
+<Base content={content} page="fleet" image={c.hero.image}>
+  <Hero data={c.hero} path="fleet.hero" />
+  <Notice text={c.notice} path="fleet.notice" label={content.global.plannedLabel} />
+
+  <section class="section section--white">
+    <div class="wrap">
+      <div class="section-head"><span class="eyebrow" {...E.t('needs.eyebrow')}>{c.needs.eyebrow}</span></div>
+      <div class="grid grid--4" {...E.list('needs.items')}>
+        {c.needs.items.map((it, i) => <div class="feature"><h3 {...E.t(`needs.items.${i}.title`)}>{it.title}</h3><p {...E.t(`needs.items.${i}.text`)}>{it.text}</p></div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" {...E.t('journey.eyebrow')}>{c.journey.eyebrow}</span>
+        <h2 {...E.t('journey.title')}>{c.journey.title}</h2>
+      </div>
+      <Road steps={c.journey.steps} label="Fleet owner journey" path="fleet.journey.steps" />
+      <div class="grid grid--3" style="margin-top:clamp(40px,5vw,64px)" {...E.list('benefits')}>
+        {c.benefits.map((b, i) => <div class="card"><h3 {...E.t(`benefits.${i}.title`)}>{b.title}</h3><p {...E.t(`benefits.${i}.text`)}>{b.text}</p></div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--navy">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" {...E.t('program.eyebrow')}>{c.program.eyebrow}</span>
+        <h2 {...E.t('program.title')}>{c.program.title}</h2>
+      </div>
+      <div class="grid grid--3" {...E.list('program.items')}>
+        {c.program.items.map((it, i) => <div class="feature"><h3 {...E.t(`program.items.${i}.title`)}>{it.title}</h3><p {...E.t(`program.items.${i}.text`)}>{it.text}</p></div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--white">
+    <div class="wrap">
+      {c.pricing.show ? (
+        <>
+          <div class="section-head">
+            <span class="eyebrow" {...E.t('pricing.eyebrow')}>{c.pricing.eyebrow}</span>
+            <h2 {...E.t('pricing.title')}>{c.pricing.title}</h2>
+          </div>
+          <div class="tiers" {...E.list('pricing.tiers', { label: 'Fleet tier', price: '₹' })}>
+            {c.pricing.tiers.map((t: { label: string; price: string }, i: number) => (
+              <div class="tier">
+                <span {...E.t(`pricing.tiers.${i}.label`)}>{t.label}</span>
+                <span class="price" {...E.t(`pricing.tiers.${i}.price`)}>{t.price}</span>
+                <span class="unit">{c.pricing.unit}</span>
+              </div>
+            ))}
+          </div>
+          {(c.pricing.note || E.on) && <p class="note" style="margin-top:1.5rem" {...E.t('pricing.note')}>{c.pricing.note}</p>}
+        </>
+      ) : (
+        <div class="section-head" style="margin-bottom:0">
+          <span class="eyebrow" {...E.t('pricing.eyebrow')}>{c.pricing.eyebrow}</span>
+          <h2 {...E.t('pricing.hiddenText')}>{c.pricing.hiddenText}</h2>
+          <div><a class="btn btn--outline" href={inquiry} style="margin-top:.5rem"><span {...E.t('hero.buttons.0.text')}>{c.hero.buttons[0]?.text}</span></a></div>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <CtaBand data={c.cta} path="fleet.cta" />
+</Base>

@@ -1,13 +1,15 @@
 ---
 // Full-width "planned" notice shown under a page hero.
-interface Props { text?: string }
-const { text } = Astro.props;
+import { editor } from '../lib/edit';
+interface Props { text?: string; path: string; label: string }
+const { text, path, label } = Astro.props;
+const E = editor(Astro.locals);
 ---
-{text && (
+{(text || E.on) && (
   <div class="plan-bar" role="note">
     <div class="wrap">
-      <span class="status">Planned</span>
-      <p>{text}</p>
+      <span class="status" {...E.t('global.plannedLabel')}>{label}</span>
+      <p {...E.t(path)}>{text}</p>
     </div>
   </div>
 )}

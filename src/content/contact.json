@@ -13,5 +13,37 @@
   "formTitle": "Send an inquiry",
   "formIntro": "Fill in your details and press Send. WhatsApp will open with your inquiry ready to send to AITS.",
   "whatsappButtonText": "Send on WhatsApp",
-  "whatsappMissingText": "WhatsApp inquiries will open here soon, once the AITS number is confirmed."
+  "whatsappMissingText": "WhatsApp inquiries will open here soon, once the AITS number is confirmed.",
+  "form": {
+    "typeLabel": "Inquiry type",
+    "types": [
+      {
+        "value": "General",
+        "label": "General inquiry"
+      },
+      {
+        "value": "Fleet",
+        "label": "Fleet inquiry"
+      },
+      {
+        "value": "Investor",
+        "label": "Investor inquiry"
+      }
+    ],
+    "nameLabel": "Name",
+    "companyLabel": "Company",
+    "regionLabel": "City or operating region",
+    "fleetSizeLabel": "Fleet size",
+    "fleetSizes": [
+      "1–49 trucks",
+      "50–149 trucks",
+      "150–249 trucks",
+      "250+ trucks"
+    ],
+    "selectPlaceholder": "Select",
+    "messageLabel": "Message",
+    "nameError": "Please add your name.",
+    "companyError": "Please add your company.",
+    "messageHeader": "New website inquiry"
+  }
 }

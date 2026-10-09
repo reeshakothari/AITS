@@ -1,0 +1,65 @@
+---
+import { demoMode, hasSupabase, SUPABASE_ANON_KEY, SUPABASE_URL, ADMIN_COOKIE } from '../../lib/content';
+import '../../styles/global.css';
+import '../../styles/editor.css';
+
+if (demoMode) return Astro.redirect('/admin/edit/home/');
+Astro.response.headers.set('Cache-Control', 'no-store');
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>AITS Admin</title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,600..800&family=Public+Sans:wght@400;600;700&display=swap" />
+  </head>
+  <body class="login-page">
+    <main class="login">
+      <img src="/images/logo.png" alt="AITS · All India Truckshed" width="260" height="61" />
+      <h1>Website editor</h1>
+      {hasSupabase ? (
+        <form id="login" data-url={SUPABASE_URL} data-key={SUPABASE_ANON_KEY} data-cookie={ADMIN_COOKIE}>
+          <div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="username" required /></div>
+          <div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required /></div>
+          <p class="form-error" role="alert" hidden></p>
+          <button class="btn btn--primary" type="submit">Log in</button>
+        </form>
+      ) : (
+        <p class="form-error">Supabase is not configured. Set PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_ANON_KEY.</p>
+      )}
+    </main>
+    <script>
+      import { adminClient, setAdminCookie } from '../../scripts/admin-auth';
+      const form = document.getElementById('login') as HTMLFormElement | null;
+      const error = document.querySelector<HTMLElement>('.form-error');
+      const next = new URLSearchParams(location.search).get('next') || '/admin/edit/home/';
+      const safeNext = next.startsWith('/admin/') ? next : '/admin/edit/home/';
+
+      if (form) {
+        const sb = adminClient(form.dataset.url!, form.dataset.key!, form.dataset.cookie!);
+        // Already signed in (e.g. the cookie expired but the session can refresh): go straight to the editor.
+        sb.auth.getSession().then(({ data }) => {
+          if (data.session && !new URLSearchParams(location.search).has('loggedout')) {
+            setAdminCookie(form.dataset.cookie!, data.session.access_token);
+            location.replace(safeNext);
+          }
+        });
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const email = (document.getElementById('email') as HTMLInputElement).value;
+          const password = (document.getElementById('password') as HTMLInputElement).value;
+          const { data, error: err } = await sb.auth.signInWithPassword({ email, password });
+          if (err || !data.session) {
+            if (error) { error.textContent = err?.message === 'Invalid login credentials' ? 'That email and password do not match. Try again.' : (err?.message ?? 'Could not log in.'); error.hidden = false; }
+            return;
+          }
+          setAdminCookie(form.dataset.cookie!, data.session.access_token);
+          location.replace(safeNext);
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,40 +1,61 @@
 ---
+import { editor } from '../lib/edit';
+
+interface Btn { text: string; href: string }
 interface Props {
-  eyebrow?: string;
-  title: string;
-  lead?: string;
-  image?: string;
-  imageAlt?: string;
-  caption?: string;
+  data: {
+    eyebrow?: string; status?: string; title: string; lead?: string;
+    image?: string; imageAlt?: string; imageCaption?: string; buttons?: Btn[];
+  };
+  /** Content path of the hero object, e.g. "home.hero" */
+  path: string;
   square?: boolean;
-  /** Full-bleed background image behind a navy overlay (used instead of a side image) */
-  bg?: string;
-  /** Small status pill above the eyebrow, e.g. "In planning" */
-  status?: string;
+  /** Use data.image as a full-bleed background instead of a side image */
+  background?: boolean;
 }
-const { eyebrow, title, lead, image, imageAlt = '', caption, square = false, bg, status } = Astro.props;
-const words = title.split(' ');
+const { data, path, square = false, background = false } = Astro.props;
+const E = editor(Astro.locals, path);
+const words = data.title.split(' ');
+const sideImage = !background && data.image;
 ---
-<section class:list={['hero', { 'hero--split': image }]}>
-  {bg && <div class="hero-bg" style={`background-image:url(${bg})`} aria-hidden="true"></div>}
+<section class:list={['hero', { 'hero--split': sideImage }]}>
+  {background && data.image && <div class="hero-bg" style={`background-image:url(${data.image})`} aria-hidden="true" {...E.bg('image')}></div>}
   <div class="hero-lanes" aria-hidden="true"><span></span></div>
   <div class="wrap">
     <div class="hero-copy">
-      {eyebrow && <span class="eyebrow">{eyebrow}{status && <span class="hero-status">{status}</span>}</span>}
-      <h1 aria-label={title}>
-        {words.map((w, i) => (
-          <>
-            <span class="w" aria-hidden="true"><span style={`--i:${i}`}>{w}</span></span>{i < words.length - 1 ? ' ' : ''}
-          </>
-        ))}
-      </h1>
-      {lead && <p class="lead">{lead}</p>}
+      {(data.eyebrow || E.on) && (
+        <span class="eyebrow">
+          <span {...E.t('eyebrow')}>{data.eyebrow}</span>
+          {(data.status || (E.on && data.status !== undefined)) && <span class="hero-status" {...E.t('status')}>{data.status}</span>}
+        </span>
+      )}
+      {E.on ? (
+        <h1 {...E.t('title')}>{data.title}</h1>
+      ) : (
+        <h1 aria-label={data.title}>
+          {words.map((w, i) => (
+            <>
+              <span class="w" aria-hidden="true"><span style={`--i:${i}`}>{w}</span></span>{i < words.length - 1 ? ' ' : ''}
+            </>
+          ))}
+        </h1>
+      )}
+      {(data.lead || E.on) && <p class="lead" {...E.t('lead')}>{data.lead}</p>}
       <slot />
+      {data.buttons && data.buttons.length > 0 && (
+        <div class="hero-actions" {...E.list('buttons')}>
+          {data.buttons.map((b, i) => (
+            <a class:list={['btn', i === 0 ? 'btn--primary' : 'btn--ghost']} href={b.href} {...E.href(`buttons.${i}.href`)}>
+              <span {...E.t(`buttons.${i}.text`)}>{b.text}</span>
+            </a>
+          ))}
+        </div>
+      )}
     </div>
-    {image && (
+    {sideImage && (
       <figure class:list={['hero-media', { 'hero-media--square': square }]} style="margin:0">
-        <img src={image} alt={imageAlt} width="800" height="1000" fetchpriority="high" />
-        {caption && <figcaption>{caption}</figcaption>}
+        <img src={data.image} alt={data.imageAlt ?? ''} width="800" height="1000" fetchpriority="high" {...E.img('image', 'imageAlt')} />
+        {(data.imageCaption || (E.on && data.imageCaption !== undefined)) && <figcaption {...E.t('imageCaption')}>{data.imageCaption}</figcaption>}
       </figure>
     )}
   </div>

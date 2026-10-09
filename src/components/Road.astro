@@ -1,11 +1,15 @@
 ---
 // A numbered journey drawn as a road with lane markings. Horizontal on desktop, vertical on mobile.
 // On desktop a small truck drives the road when it scrolls into view (see motion.css).
+import { editor } from '../lib/edit';
 interface Props {
   steps: { title: string; text?: string }[];
   label: string;
+  /** Content path of the steps array */
+  path: string;
 }
-const { steps, label } = Astro.props;
+const { steps, label, path } = Astro.props;
+const E = editor(Astro.locals, path);
 ---
 <div class="road-wrap" style={`--steps:${steps.length}`}>
   <span class="road-truck" aria-hidden="true">
@@ -18,11 +22,11 @@ const { steps, label } = Astro.props;
       <circle cx="37" cy="19.5" r="3.6" fill="#1F2937" stroke="#F8FAFC" stroke-width="1.6" />
     </svg>
   </span>
-  <ol class="road road--end" aria-label={label}>
+  <ol class="road road--end" aria-label={label} {...(E.on ? { 'data-e-list': path } : {})}>
     {steps.map((s, i) => (
       <li style={`--i:${i}`}>
-        <h3>{s.title}</h3>
-        {s.text && <p>{s.text}</p>}
+        <h3 {...E.t(`${i}.title`)}>{s.title}</h3>
+        {(s.text || E.on) && <p {...E.t(`${i}.text`)}>{s.text}</p>}
       </li>
     ))}
   </ol>

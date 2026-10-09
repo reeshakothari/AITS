@@ -9,7 +9,12 @@
     "lead": "Simple pricing. Better economics at fleet scale.",
     "image": "/images/truck-front.jpg",
     "imageAlt": "Front of a hand-painted Indian goods truck with a decorated cabin",
-    "buttonText": "Request a fleet quote"
+    "buttons": [
+      {
+        "text": "Request a fleet quote",
+        "href": "/contact/?type=fleet#inquiry"
+      }
+    ]
   },
   "needs": {
     "eyebrow": "What fleets need",
@@ -96,12 +101,14 @@
     "unit": "per truck per wash",
     "tiers": [],
     "note": "",
-    "hiddenText": "Fleet pricing is shared on request, based on fleet size and wash frequency."
+    "hiddenText": "Fleet pricing is shared on request, based on fleet size and wash frequency.",
+    "eyebrow": "Pricing"
   },
   "cta": {
     "title": "Make a fleet inquiry",
     "text": "Tell us about your fleet and AITS will get back to you.",
-    "buttonText": "Request a fleet quote"
+    "buttonText": "Request a fleet quote",
+    "buttonHref": "/contact/?type=fleet#inquiry"
   },
   "notice": "The AITS Fleet Program is planned and will be available once AITS Wash is operating. The details below describe the proposed program."
 }

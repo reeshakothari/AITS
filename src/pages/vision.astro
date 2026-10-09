@@ -1,46 +1,9 @@
 ---
-import Base from '../layouts/Base.astro';
-import CtaBand from '../components/CtaBand.astro';
-import Hero from '../components/Hero.astro';
-import Notice from '../components/Notice.astro';
-import Status from '../components/Status.astro';
-import c from '../content/vision.json';
+import View from '../views/VisionView.astro';
+import { loadContent } from '../lib/content';
+
+const content = await loadContent('published');
+// Short CDN cache so a publish from the admin shows up within seconds.
+Astro.response.headers.set('Netlify-CDN-Cache-Control', 'public, durable, s-maxage=10, stale-while-revalidate=60');
 ---
-<Base title={c.seo.title} description={c.seo.description} image={c.hero.image}>
-  <Hero eyebrow={c.hero.eyebrow} title={c.hero.title} lead={c.hero.lead} bg={c.hero.image} />
-  <Notice text={c.notice} />
-
-  <section class="section section--white">
-    <div class="wrap">
-      <div class="section-head"><h2>{c.stagesTitle}</h2></div>
-      <ol class="steps" aria-label="AITS steps">
-        {c.stages.map((s, i) => (
-          <li class:list={['stage', { 'stage--current': i === 0 }]}>
-            <span class="num">Step {i + 1}</span>
-            <h3>{s.name}</h3>
-            <p>{s.text}</p>
-            <Status label={s.status} />
-          </li>
-        ))}
-        {c.nextTitle && (
-          <li class="stage stage--next">
-            <span class="num">Next</span>
-            <h3>{c.nextTitle}</h3>
-            {c.nextText && <p>{c.nextText}</p>}
-          </li>
-        )}
-      </ol>
-    </div>
-  </section>
-
-  {c.rollout.length > 0 && (
-    <section class="section section--navy">
-      <div class="wrap">
-        <div class="section-head"><h2>{c.rolloutTitle}</h2></div>
-        <ol class="rollout" aria-label={c.rolloutTitle}>{c.rollout.map((r) => <li>{r}</li>)}</ol>
-      </div>
-    </section>
-  )}
-
-  <CtaBand title={c.cta.title} text={c.cta.text} buttonText={c.cta.buttonText} href="/contact/" />
-</Base>
+<View content={content} />

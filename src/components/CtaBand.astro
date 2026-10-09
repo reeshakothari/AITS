@@ -1,18 +1,19 @@
 ---
+import { editor } from '../lib/edit';
 interface Props {
-  title: string;
-  text?: string;
-  buttonText: string;
-  href: string;
+  data: { title: string; text?: string; buttonText: string; buttonHref?: string };
+  path: string;
+  href?: string;
 }
-const { title, text, buttonText, href } = Astro.props;
+const { data, path, href } = Astro.props;
+const E = editor(Astro.locals, path);
 ---
 <section class="cta-band">
   <div class="wrap">
     <div>
-      <h2>{title}</h2>
-      {text && <p>{text}</p>}
+      <h2 {...E.t('title')}>{data.title}</h2>
+      {(data.text || E.on) && <p {...E.t('text')}>{data.text}</p>}
     </div>
-    <a class="btn" href={href}>{buttonText}</a>
+    <a class="btn" href={data.buttonHref || href || '/contact/'} {...E.href('buttonHref')}><span {...E.t('buttonText')}>{data.buttonText}</span></a>
   </div>
 </section>
