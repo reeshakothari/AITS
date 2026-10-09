@@ -53,6 +53,14 @@ export function hasSession(cookies: AstroCookies) {
 /** Rejects cross-site requests to the admin API. */
 export function sameOrigin(request: Request, url: URL) {
   const origin = request.headers.get('origin');
-  if (origin) return origin === url.origin;
+  if (origin) {
+    // Behind Vercel's proxy `url` can carry an internal host, so compare against the host the browser used.
+    const host = request.headers.get('x-forwarded-host') ?? request.headers.get('host') ?? url.host;
+    try {
+      return new URL(origin).host === host;
+    } catch {
+      return false;
+    }
+  }
   return request.headers.get('sec-fetch-site') === 'same-origin';
 }
