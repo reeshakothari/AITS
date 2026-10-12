@@ -17,7 +17,7 @@ const views = {
 
 const page = Astro.params.page as keyof typeof views;
 if (!(page in views)) return Astro.redirect('/admin/edit/home/');
-if (!demoMode() && !hasSession(Astro.cookies)) {
+if (!demoMode() && !(await hasSession(Astro.cookies))) {
   return Astro.redirect(`/admin/?next=${encodeURIComponent(`/admin/edit/${page}/`)}`);
 }
 

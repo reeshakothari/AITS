@@ -2,7 +2,7 @@
 // Every action except login needs a valid admin session (or local demo mode).
 import type { APIRoute } from 'astro';
 import { checkCredentials, endSession, hasSession, sameOrigin, startSession } from '../../../lib/auth';
-import { canWrite, CONTENT_KEYS, demoMode, demoUpload, discardDrafts, publishDrafts, saveDraft, signedUpload, type ContentKey } from '../../../lib/content';
+import { canWrite, CONTENT_KEYS, demoMode, demoUpload, discardDrafts, publishDrafts, saveDraft, signedUpload, signOutEverywhere, type ContentKey } from '../../../lib/content';
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
@@ -24,18 +24,23 @@ export const POST: APIRoute = async ({ params, request, cookies, url }) => {
     return json({ ok: true });
   }
   if (action === 'logout') {
+    // Only a signed-in admin can sign everyone out; anyone may clear their own cookie.
+    if (!demoMode() && (await hasSession(cookies))) await signOutEverywhere().catch((err) => console.error('[auth] sign-out not recorded:', err.message));
     endSession(cookies);
     return json({ ok: true });
   }
 
-  if (!demoMode() && !hasSession(cookies)) return json({ error: 'Your session has ended. Log in again.' }, 401);
+  if (!demoMode() && !(await hasSession(cookies))) return json({ error: 'Your session has ended. Log in again.' }, 401);
   if (!demoMode() && !canWrite()) return json({ error: 'Saving is not set up: SUPABASE_SERVICE_ROLE_KEY is missing on the server.' }, 500);
 
   try {
     switch (action) {
       case 'save': {
         if (!CONTENT_KEYS.includes(body.key)) return json({ error: 'Unknown content section.' }, 400);
-        if (!body.data || typeof body.data !== 'object') return json({ error: 'Nothing to save.' }, 400);
+        // Each save replaces a whole section, so an empty or malformed one would wipe it.
+        if (!body.data || typeof body.data !== 'object' || Array.isArray(body.data) || !Object.keys(body.data).length) {
+          return json({ error: 'Nothing to save.' }, 400);
+        }
         await saveDraft(body.key as ContentKey, body.data);
         return json({ ok: true });
       }

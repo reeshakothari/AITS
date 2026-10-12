@@ -2,6 +2,7 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import type { AstroCookies } from 'astro';
 import { serverEnv } from './env';
+import { sessionsValidAfter } from './content';
 
 export const SESSION_COOKIE = 'aits-admin';
 const SESSION_HOURS = 12;
@@ -40,14 +41,18 @@ export function endSession(cookies: AstroCookies) {
   cookies.delete(SESSION_COOKIE, { path: '/' });
 }
 
-export function hasSession(cookies: AstroCookies) {
+/** Valid signature, not expired, and issued after the last logout. */
+export async function hasSession(cookies: AstroCookies) {
   if (!adminConfigured()) return false;
   const token = cookies.get(SESSION_COOKIE)?.value ?? '';
   const [v, expires, sig] = token.split('.');
   if (v !== 'v1' || !expires || !sig) return false;
   const expected = sign(`${v}.${expires}`);
   const ok = sig.length === expected.length && timingSafeEqual(Buffer.from(sig), Buffer.from(expected));
-  return ok && Number(expires) > Date.now();
+  if (!ok || Number(expires) <= Date.now()) return false;
+  const issued = Number(expires) - SESSION_HOURS * 3600_000;
+  // If the sign-out time cannot be read, fail closed.
+  return sessionsValidAfter().then((after) => issued > after, () => false);
 }
 
 /** Rejects cross-site requests to the admin API. */

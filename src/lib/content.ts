@@ -132,6 +132,28 @@ export async function discardDrafts() {
   if (error) throw new Error(error.message);
 }
 
+/* ---------------- admin sign-out time ---------------- */
+// Sessions are signed cookies with no server-side record, so logging out stores a time
+// before which every session is rejected (all devices). Kept as a non-content row that
+// applyRows ignores; it holds only a timestamp.
+const AUTH_KEY = '_auth';
+
+export async function sessionsValidAfter(): Promise<number> {
+  if (demoMode() || !canWrite()) return 0;
+  const { data, error } = await db().from(TABLE).select('data').eq('key', AUTH_KEY).eq('status', 'published').maybeSingle();
+  if (error) throw new Error(error.message);
+  return Number((data?.data as { validAfter?: number } | null)?.validAfter ?? 0);
+}
+
+export async function signOutEverywhere() {
+  if (demoMode() || !canWrite()) return;
+  const { error } = await db().from(TABLE).upsert(
+    { key: AUTH_KEY, status: 'published', data: { validAfter: Date.now() }, updated_at: new Date().toISOString() },
+    { onConflict: 'key,status' },
+  );
+  if (error) throw new Error(error.message);
+}
+
 /** True when the draft differs from what is live. */
 export async function hasUnpublished() {
   return JSON.stringify(await loadContent('draft')) !== JSON.stringify(await loadContent('published'));

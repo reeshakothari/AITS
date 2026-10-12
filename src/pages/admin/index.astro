@@ -6,7 +6,7 @@ import '../../styles/editor.css';
 
 const next = Astro.url.searchParams.get('next') ?? '';
 const target = next.startsWith('/admin/edit/') ? next : '/admin/edit/home/';
-if (demoMode() || hasSession(Astro.cookies)) return Astro.redirect(target);
+if (demoMode() || (await hasSession(Astro.cookies))) return Astro.redirect(target);
 Astro.response.headers.set('Cache-Control', 'no-store');
 const configured = adminConfigured();
 ---
