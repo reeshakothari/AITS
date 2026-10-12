@@ -400,9 +400,10 @@ document.addEventListener('mouseover', (e) => {
   (bar.querySelector('[data-act="down"]') as HTMLButtonElement).disabled = index === null || index >= items.length - 1;
   bar.dataset.nav = String(!!found.list.closest('.site-header'));
   // Below the item so it never covers the neighbouring items; above only when there is no room below.
-  const below = r.bottom + 6;
+  // An empty list gets its + inside its dashed box, clear of the note underneath.
+  const below = index === null ? r.top + 10 : r.bottom + 6;
   bar.style.top = `${below + 40 > window.innerHeight ? Math.max(60, r.top - 40) : below}px`;
-  bar.style.left = `${Math.max(8, Math.min(r.left, window.innerWidth - 220))}px`;
+  bar.style.left = `${Math.max(8, Math.min(r.left + (index === null ? 10 : 0), window.innerWidth - 220))}px`;
   bar.classList.add('is-open');
 });
 window.addEventListener('scroll', () => bar.classList.remove('is-open'), { passive: true });
