@@ -177,10 +177,44 @@ document.querySelectorAll<HTMLElement>('[data-e]').forEach((el) => {
   });
 });
 
+/* ---------------- page navigation ---------------- */
+
+const pageKeys = Array.from((document.getElementById('aits-page') as HTMLSelectElement).options, (o) => o.value);
+/** The editor page a link points to, or null for external links and pages without an editor. */
+function editorPageFor(href: string): string | null {
+  const u = new URL(href, location.href);
+  if (u.origin !== location.origin) return null;
+  const key = u.pathname.replace(/^\/+|\/+$/g, '') || 'home';
+  return pageKeys.includes(key) ? key : null;
+}
+async function goToPage(key: string) {
+  await save();
+  location.href = `/admin/edit/${key}/`;
+}
+
+// Menu links open that page in the editor. Their text and link are edited from the list bar's edit button.
+const navLinks = () => Array.from(document.querySelectorAll<HTMLAnchorElement>('.site-header nav a'));
+let navEditing: HTMLAnchorElement | null = null;
+navLinks().forEach((a) => { if (editorPageFor(a.href)) a.title = 'Click to edit this page'; });
+document.addEventListener('mousedown', (e) => {
+  const a = (e.target as Element).closest<HTMLAnchorElement>('.site-header nav a');
+  if (a && a !== navEditing) e.preventDefault(); // keeps the label from going into text editing
+}, true);
+
 // Links, buttons and labels must not navigate or toggle while editing.
 document.addEventListener('click', (e) => {
   const t = e.target as Element;
   if (t.closest('.aits-editor-ui')) return;
+  const navLink = t.closest<HTMLAnchorElement>('.site-header nav a');
+  const plainLink = t.closest<HTMLAnchorElement>('a:not([data-e-href])');
+  const link = navLink && navLink !== navEditing ? navLink : plainLink && !t.closest('[data-e]') ? plainLink : null;
+  const key = link && editorPageFor(link.href);
+  if (key) {
+    e.preventDefault();
+    e.stopPropagation();
+    goToPage(key);
+    return;
+  }
   if (t.closest('a') || t.closest('button[type="submit"]') || (t.closest('[data-e]') && t.closest('label'))) e.preventDefault();
   const img = t.closest<HTMLElement>('[data-e-img]');
   if (img) openImageDialog(img);
@@ -213,6 +247,7 @@ linkInput.addEventListener('input', () => {
 document.addEventListener('focusin', (e) => {
   const t = e.target as Element;
   if (linkBox.contains(t)) return;
+  if (navEditing && !navEditing.contains(t)) navEditing = null;
   const a = t.closest<HTMLAnchorElement>('a[data-e-href]');
   if (a) showLink(a);
   else linkBox.classList.remove('is-open');
@@ -332,7 +367,7 @@ const mk = (label: string, title: string, act: string) => {
   b.dataset.act = act;
   return b;
 };
-bar.append(mk('↑', 'Move earlier', 'up'), mk('↓', 'Move later', 'down'), mk('⧉', 'Duplicate', 'dup'), mk('+', 'Add item after', 'add'), mk('✕', 'Delete', 'del'));
+bar.append(mk('✎', 'Edit text and link', 'edit'), mk('↑', 'Move earlier', 'up'),mk('↓', 'Move later', 'down'), mk('⧉', 'Duplicate', 'dup'), mk('+', 'Add item after', 'add'), mk('✕', 'Delete', 'del'));
 document.body.append(bar);
 
 let active: { list: HTMLElement; index: number | null } | null = null;
@@ -363,8 +398,11 @@ document.addEventListener('mouseover', (e) => {
   bar.dataset.empty = String(index === null);
   (bar.querySelector('[data-act="up"]') as HTMLButtonElement).disabled = !index;
   (bar.querySelector('[data-act="down"]') as HTMLButtonElement).disabled = index === null || index >= items.length - 1;
-  bar.style.top = `${Math.max(60, r.top - 34)}px`;
-  bar.style.left = `${Math.max(8, Math.min(r.right - 170, window.innerWidth - 178))}px`;
+  bar.dataset.nav = String(!!found.list.closest('.site-header'));
+  // Below the item so it never covers the neighbouring items; above only when there is no room below.
+  const below = r.bottom + 6;
+  bar.style.top = `${below + 40 > window.innerHeight ? Math.max(60, r.top - 40) : below}px`;
+  bar.style.left = `${Math.max(8, Math.min(r.left, window.innerWidth - 220))}px`;
   bar.classList.add('is-open');
 });
 window.addEventListener('scroll', () => bar.classList.remove('is-open'), { passive: true });
@@ -372,6 +410,16 @@ window.addEventListener('scroll', () => bar.classList.remove('is-open'), { passi
 bar.addEventListener('click', async (e) => {
   const act = (e.target as HTMLElement).closest<HTMLElement>('[data-act]')?.dataset.act;
   if (!act || !active) return;
+  if (act === 'edit') {
+    const a = active.index === null ? null : (itemsOf(active.list)[active.index] as HTMLAnchorElement);
+    const label = a?.querySelector<HTMLElement>('[data-e]');
+    if (!a || !label) return;
+    navEditing = a;
+    bar.classList.remove('is-open');
+    label.focus();
+    getSelection()?.selectAllChildren(label);
+    return;
+  }
   const path = active.list.dataset.eList!;
   const arr = ((getPath(path) as Json[] | undefined) ?? []).slice();
   const i = active.index;
@@ -509,10 +557,7 @@ document.getElementById('aits-logout')?.addEventListener('click', async () => {
   await api('logout').catch(() => {});
   location.href = '/admin/';
 });
-document.getElementById('aits-page')!.addEventListener('change', async (e) => {
-  await save();
-  location.href = `/admin/edit/${(e.target as HTMLSelectElement).value}/`;
-});
+document.getElementById('aits-page')!.addEventListener('change', (e) => goToPage((e.target as HTMLSelectElement).value));
 document.addEventListener('keydown', (e) => {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); }
 });

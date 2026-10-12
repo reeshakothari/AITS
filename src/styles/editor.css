@@ -81,6 +81,7 @@
 .aits-listbar button:hover:not(:disabled) { background: rgba(255, 255, 255, .14); }
 .aits-listbar button:disabled { opacity: .3; cursor: default; }
 .aits-listbar[data-empty="true"] button:not([data-act="add"]) { display: none; }
+.aits-listbar:not([data-nav="true"]) button[data-act="edit"] { display: none; }
 .is-editing [data-e-list]:empty { min-height: 48px; outline: 2px dashed rgba(143, 176, 247, .6); border-radius: 6px; }
 
 /* Background image button */
