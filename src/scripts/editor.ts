@@ -389,7 +389,12 @@ document.addEventListener('mouseover', (e) => {
   const t = e.target as Element;
   if (bar.contains(t)) { window.clearTimeout(hideTimer); return; }
   const found = findItem(t);
-  if (!found) { hideTimer = window.setTimeout(() => bar.classList.remove('is-open'), 250); return; }
+  if (!found) {
+    // Restart rather than stack timers: a stale one would close the bar over the item now hovered.
+    window.clearTimeout(hideTimer);
+    hideTimer = window.setTimeout(() => bar.classList.remove('is-open'), 250);
+    return;
+  }
   window.clearTimeout(hideTimer);
   const items = itemsOf(found.list);
   const index = found.item ? items.indexOf(found.item) : null;
