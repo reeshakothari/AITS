@@ -151,6 +151,43 @@ html [data-reveal][data-reveal] {
   .rollout.is-in::before { animation-name: draw-y; }
 }
 
+/* ---------- Billing formula (Investors) ---------- */
+/* Builds left to right (input, operator, input…, =, result), then a light pulse
+   runs across the inputs and lands on the result, like the sum being worked out. */
+@keyframes chip-in { from { opacity: 0; transform: translateY(16px) scale(.92); } }
+@keyframes op-in { from { opacity: 0; transform: rotate(-120deg) scale(.3); } }
+@keyframes result-in { 0% { opacity: 0; transform: scale(.6); } 65% { opacity: 1; transform: scale(1.08); } 100% { transform: scale(1); } }
+@keyframes lit {
+  0%, 26%, 100% { border-color: rgba(143,176,247,.35); background-color: rgba(255,255,255,.06); box-shadow: none; }
+  9% { border-color: #8fb0f7; background-color: rgba(143,176,247,.18); box-shadow: 0 0 22px rgba(96,141,240,.45); }
+}
+@keyframes result-pulse {
+  0%, 30%, 100% { box-shadow: 0 0 0 4px rgba(143,176,247,.2), 0 0 34px rgba(96,141,240,.55); }
+  12% { box-shadow: 0 0 0 7px rgba(143,176,247,.32), 0 0 56px rgba(96,141,240,.95); }
+}
+@keyframes shine { 0%, 8% { left: -70%; } 30%, 100% { left: 130%; } }
+
+.formula { --loop: 4.5s; --rest: 1.6s; }
+.formula li::before, .formula-eq { display: inline-block; }
+.formula-result { position: relative; overflow: hidden; }
+.formula-result::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: -70%; width: 45%; pointer-events: none;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent); transform: skewX(-20deg);
+}
+.formula li:nth-child(1) { --d: .1s; }
+.formula li:nth-child(2) { --d: .45s; }
+.formula li:nth-child(3) { --d: .8s; }
+.formula li:nth-child(4) { --d: 1.15s; }
+.formula.is-in li span {
+  animation: chip-in .6s var(--ease-out) var(--d) both, lit var(--loop) ease-in-out calc(var(--d) + var(--rest)) infinite;
+}
+.formula.is-in li + li::before { animation: op-in .5s var(--ease-out) calc(var(--d) - .15s) both; }
+.formula.is-in .formula-eq { animation: op-in .5s var(--ease-out) 1.15s both; }
+.formula.is-in .formula-result {
+  animation: result-in .7s var(--ease-out) 1.35s both, result-pulse var(--loop) ease-in-out calc(1.25s + var(--rest)) infinite;
+}
+.formula.is-in .formula-result::after { animation: shine var(--loop) ease-in-out calc(1.25s + var(--rest)) infinite; }
+
 /* ---------- Keyword marquee (Home) ---------- */
 .marquee { background: var(--navy-deep); color: var(--white); overflow: hidden; border-top: 1px solid rgba(255, 255, 255, .08); }
 .marquee-track { display: flex; width: max-content; animation: marquee 38s linear infinite; }

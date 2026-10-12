@@ -10,7 +10,8 @@
 .is-editing .marquee-track > ul + ul { display: none; }
 .is-editing .marquee ul { flex-wrap: wrap; padding-inline: var(--gutter); }
 .is-editing .hero-lanes span, .is-editing .lane-truck, .is-editing .lane-track::before,
-.is-editing .road::after, .is-editing .road-truck, .is-editing .lane li, .is-editing .rollout li::before { animation: none !important; }
+.is-editing .road::after, .is-editing .road-truck, .is-editing .lane li, .is-editing .rollout li::before,
+.is-editing .formula *, .is-editing .formula li::before, .is-editing .formula-result::after { animation: none !important; }
 .is-editing .hero-copy > *, .is-editing .hero-media, .is-editing .hero-media img { animation: none !important; }
 .is-editing [data-reveal] { opacity: 1 !important; transform: none !important; }
 .is-editing .topic:hover { transform: none; }
